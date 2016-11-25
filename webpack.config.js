@@ -11,7 +11,8 @@ module.exports = {
   },
   module: {
     loaders: [
-      {test: /\.html$|\.css$/, loader: 'file?name=[name].[ext]'},
+      {test: /\.css$/, loader: 'style!css'},
+      {test: /\.html$|\.eot$|\.woff$|\.woff2$|\.ttf$/, loader: 'file?name=[name].[ext]'},
       {test: /\.jsx?$/, exclude: /node_modules/, loader: "babel?presets[]=react,presets[]=es2015"}
     ]
   }
