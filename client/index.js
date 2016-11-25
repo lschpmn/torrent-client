@@ -6,6 +6,7 @@ import RootComponent from './components/RootComponent';
 
 //website
 import './index.html';
-import './style/bootstrap.min.css';
+import 'materialize-css/dist/css/materialize.min.css';
+import 'materialize-css/dist/js/materialize.min';
 
 render(<RootComponent />, document.getElementById('react'));
