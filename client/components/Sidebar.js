@@ -1,6 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 
 export default class Sidebar extends Component {
   render() {
@@ -9,9 +10,9 @@ export default class Sidebar extends Component {
     return <div className="grey lighten-2" style={{height: '100%'}}>
       <ul className="collection" style={{margin: 0}}>
         <li><h4 className="center-align">Torrents</h4></li>
-        <li><a href="#" className={linkClasses}>Downloads</a></li>
-        <li><a href="#" className={linkClasses}>Search</a></li>
-        <li><a href="#" className={linkClasses}>Settings</a></li>
+        <li><Link to="/" className={linkClasses}>Downloads</Link></li>
+        <li><Link to="/search" className={linkClasses}>Search</Link></li>
+        <li><Link to="/settings" className={linkClasses}>Settings</Link></li>
       </ul>
     </div>;
   }
