@@ -6,7 +6,13 @@ import Siderbar from './Sidebar';
 export default class RootComponent extends Component {
   render() {
     return <div style={{height: '100%', margin: 0, padding: 0}} className="row">
-      <Siderbar />
+      <div className="col s3" style={{height: '100%', margin: 0, padding: 0}}>
+        <Siderbar />
+      </div>
+      
+      <div className="col s9">
+        {this.props.children}
+      </div>
     </div>;
   }
 }
