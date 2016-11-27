@@ -10,6 +10,7 @@ import {browserHistory, IndexRoute, Router, Route} from 'react-router';
 //website
 import './index.html';
 import 'materialize-css/dist/css/materialize.min.css';
+import './icons/icon.css';
 import 'materialize-css/dist/js/materialize.min';
 
 render(
