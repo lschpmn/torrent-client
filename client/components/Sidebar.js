@@ -7,7 +7,7 @@ export default class Sidebar extends Component {
   render() {
     const linkClasses = 'collection-item black-text grey lighten-2';
     
-    return <div className="grey lighten-2" style={{height: '100%'}}>
+    return <div className="grey lighten-2 z-depth-3" style={{height: '100%'}}>
       <ul className="collection" style={{margin: 0}}>
         <li><h4 className="center-align">Torrents</h4></li>
         <li><Link to="/" className={linkClasses}>Downloads</Link></li>
