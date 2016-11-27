@@ -21,11 +21,11 @@ function createWindow () {
   
   win.on('closed', () => {
     win = null
-  })
+  });
 }
 
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
-  app.quit()
+  app.quit();
 });
