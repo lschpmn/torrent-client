@@ -2,12 +2,11 @@
 
 const bodyParser = require('body-parser');
 const express = require('express');
-const SearchServer = require('./lib/SearchServer');
+const {search} = require('./lib/SearchServer');
 
 class Server {
   start() {
     const app = this.app = express();
-    this.searchServer = new SearchServer();
   
     app.use(function(req, res, next) {
       res.header("Access-Control-Allow-Origin", "*");
@@ -23,18 +22,19 @@ class Server {
   }
   
   searchRequest(req, res) {
-    const searchServer = this.searchServer;
-    const id = Math.random().toString(35).slice(0, 10);
-    
-    searchServer.radio.on(`results-${id}`, results => {
-      res.send(results);
-      searchServer.stop();
+    let searchEmitter = /**@type {Emitter}*/ search(req.body.searchTerm, req.body.num);
+    let totalResults = 0;
+  
+    searchEmitter.on(`results`, results => {
+      totalResults += results.length;
+      res.write(JSON.stringify(results));
     });
     
-    searchServer.search(id, req.body.search, req.body.num);
-    
-    console.log(req.body);
-    res.send('Got it!');
+    searchEmitter.once('stop', () => {
+      console.log(`Got total results: ${totalResults}`);
+      searchEmitter = null;
+      res.end();
+    });
   }
   
   close() {

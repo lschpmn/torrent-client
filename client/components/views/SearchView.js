@@ -18,7 +18,7 @@ export default class SearchView extends Component {
     //prevents form being submitted and refreshing page
     e.preventDefault();
     
-    axios.post('http://localhost:3000/api/search', {search: this.state.search})
+    axios.post('http://localhost:3000/api/search', {searchTerm: this.state.search})
       .then(res => console.log(res))
       .catch(err => console.log(err));
   }

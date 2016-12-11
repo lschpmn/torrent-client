@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 const moment = require('moment');
 
 const REGEX = /([0-9.]+)\s(\w+)/;
-const URL = term => `https://thepiratebay.org/search/${term}/0/7/0`;
+const URL = (term, page) => `https://thepiratebay.org/search/${term}/${page}/7/0`;
 
 class PirateBay {
   /**
@@ -14,38 +14,48 @@ class PirateBay {
    */
   constructor(radio) {
     this.radio = radio;
+    this.stopped = false;
+    this.resultsNum = 0;
+    this.escapedSearchTerm = '';
+    this.num = 0;
     
     this.radio.on('search', this.search.bind(this));
     this.radio.on('stop', this.stop.bind(this));
   }
   
   /**
-   * @param {String} event.id
-   * @param {String} event.searchTerm
-   * @param {Number} event.num
+   * @param {String} searchTerm
+   * @param {Number} num
    */
-  search(event) {
-    console.log(event.searchTerm);
+  search(searchTerm, num) {
+    this.escapedSearchTerm = querystring.escape(searchTerm);
+    this.resultsNum = 0; //reset on new search
+    this.num = num;
     
-    this.radio.emit(`search-${event.id}`, {data: 'data'});
+    this._goto()
+      .catch(err => console.error(`${new Date().toLocaleDateString()} - ${err}`))
+      .then(() => this.radio.emit(`done`));
   }
   
   stop() {
-    
+    this.stopped = true;
   }
   
   /**
    * Loads website on given page, no page will load first page(0).
    * Returns promise that resolves with JSON search results
-   * @param [page]
+   * @param {Number} [page]
    * @returns Promise
    * @private
    */
-  _goto(page) {
-    const searchTerm = querystring.escape(this.searchTerm);
+  _goto(page = 0) {
     const results = [];
     
-    return fetch(URL(searchTerm), {headers: {cookie: 'lw=s'}})
+    if(this.stopped) return Promise.resolve();
+    
+    console.log(`URL: ${URL(this.escapedSearchTerm, page)}`);
+    
+    return fetch(URL(this.escapedSearchTerm, page), {headers: {cookie: 'lw=s'}})
       .then(res => res.text())
       .then(text => {
         const $ = cheerio.load(text);
@@ -62,10 +72,13 @@ class PirateBay {
             leech: +$(children[6]).text()
           });
         });
+        
+        console.log(`Got ${results.length}, total is ${this.resultsNum} out of ${this.num}`);
   
-        this.radio.emit('results', results);
-      })
-      .catch(err => console.log(err));
+        this.radio.emit(`results`, results);
+        this.resultsNum += results.length;
+        if(this.resultsNum < this.num && results.length !== 0) return this._goto(++page);
+      });
   }
   
   /**
@@ -103,8 +116,6 @@ class PirateBay {
     
     return +moment(timeString, 'MM-DD YYYY');
   }
-  
-  
 }
 
 module.exports = PirateBay;
