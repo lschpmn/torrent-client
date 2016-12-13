@@ -8,6 +8,7 @@ export default class SearchView extends Component {
     
     this.state = {
       evtSource: null,
+      results: [],
       search: '',
     };
     
@@ -19,16 +20,19 @@ export default class SearchView extends Component {
     e.preventDefault();
     
     if(this.state.evtSource) this.state.evtSource.close();//close request if ongoing
-    const evtSource = new EventSource(`http://localhost:3000/api/search?search=${encodeURIComponent(this.state.search)}&num=50`);
+    const evtSource = new EventSource(`http://localhost:3000/api/search?search=${encodeURIComponent(this.state.search)}&num=100`);
     this.setState(evtSource);
+    this.setState({results: []});
     
     evtSource.onmessage = (e) => {
-      console.log(e);
-      
       if(e.data === 'done') {
         console.log('done');
         evtSource.close();
         this.setState({evtSource: null});
+      } else {
+        const results = safeParseJson(e.data);
+        
+        this.setState({results: this.state.results.concat(results)});
       }
     };
     
@@ -62,5 +66,13 @@ export default class SearchView extends Component {
         
       </div>
     </div>;
+  }
+}
+
+function safeParseJson(string) {
+  try {
+    return JSON.parse(string);
+  } catch(err) {
+    return [];
   }
 }
