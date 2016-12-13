@@ -1,7 +1,7 @@
 'use strict';
 
 const Emitter = require('events');
-const PirateBay = require('./sites/PirateBay');
+const PirateBay = require('./websites/PirateBay');
 
 /**
  * @param {String} searchTerm

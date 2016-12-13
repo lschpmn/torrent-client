@@ -32,10 +32,15 @@ class Server {
       res.write(`data: ${JSON.stringify(results)}\n\n`);
     });
     
-    searchEmitter.once('stop', () => {
+    res.once('close', () => {
+      console.log('Event Source was closed from client');
+      if(searchEmitter) searchEmitter.emit('stop', true);
+    });
+    
+    searchEmitter.once('stop', connectionClosed => {
       console.log(`Got total results: ${totalResults}`);
       searchEmitter = null;
-      res.write(`data: done\n\n`);
+      if(!connectionClosed) res.write(`data: done\n\n`);
     });
   }
   
