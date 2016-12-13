@@ -18,13 +18,13 @@ class Server {
     });
   
     app.use(bodyParser.json());
-    app.get('/api/search', this.searchRequest.bind(this));
+    app.get('/api/search', Server.searchRequest);
     
     console.log(`Starting server on port ${port}`);
     app.listen(port);
   }
   
-  searchRequest(req, res) {
+  static searchRequest(req, res) {
     let searchEmitter = /**@type {Emitter}*/ search(req.query.search, req.query.num);
     let totalResults = 0;
     
