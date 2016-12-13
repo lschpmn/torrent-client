@@ -7,6 +7,7 @@ export default class SearchView extends Component {
     super();
     
     this.state = {
+      evtSource: null,
       search: '',
     };
     
@@ -17,20 +18,24 @@ export default class SearchView extends Component {
     //prevents form being submitted and refreshing page
     e.preventDefault();
     
+    if(this.state.evtSource) this.state.evtSource.close();//close request if ongoing
     const evtSource = new EventSource(`http://localhost:3000/api/search?search=${encodeURIComponent(this.state.search)}&num=50`);
+    this.setState(evtSource);
     
-    evtSource.onmessage = function(e) {
+    evtSource.onmessage = (e) => {
       console.log(e);
       
       if(e.data === 'done') {
         console.log('done');
         evtSource.close();
+        this.setState({evtSource: null});
       }
     };
     
-    evtSource.onerror = function(e) {
+    evtSource.onerror = (e) => {
       console.log(e);
       evtSource.close();
+      this.setState({evtSource: null});
     };
   }
   
