@@ -5,7 +5,10 @@ const express = require('express');
 const {search} = require('./lib/SearchServer');
 
 class Server {
-  start() {
+  /**
+   * @param {Number} port
+   */
+  start(port) {
     const app = this.app = express();
   
     app.use(function(req, res, next) {
@@ -17,8 +20,8 @@ class Server {
     app.use(bodyParser.json());
     app.get('/api/search', this.searchRequest.bind(this));
     
-    console.log('Starting server on port 3000');
-    app.listen(3000);
+    console.log(`Starting server on port ${port}`);
+    app.listen(port);
   }
   
   searchRequest(req, res) {
@@ -54,5 +57,5 @@ module.exports = Server;
 if(require.main === module) {
   console.log('Starting server');
   const server = new Server();
-  server.start();
+  server.start(3000);
 }
