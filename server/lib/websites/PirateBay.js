@@ -18,20 +18,24 @@ class PirateBay {
     this.resultsNum = 0;
     this.escapedSearchTerm = '';
     this.num = 0;
+    this.fired = false;
     
     this.radio.on('search', this.search.bind(this));
     this.radio.on('stop', this.stop.bind(this));
   }
   
   /**
-   * Warning, will cause strange behavior if you call while another search is ongoing
+   * Will throw error if called a second time
+   * Stand-in solution for now
    * @param {String} searchTerm
    * @param {Number} num
    */
   search(searchTerm, num) {
+    if(this.fired) throw new Error('Can only be used once!');
     this.escapedSearchTerm = querystring.escape(searchTerm);
     this.resultsNum = 0; //reset on new search
     this.num = num;
+    this.fired = true;
     
     this._goto()
       .catch(err => console.error(`${new Date().toLocaleDateString()} - ${err}`))
