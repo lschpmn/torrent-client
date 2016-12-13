@@ -24,6 +24,7 @@ class PirateBay {
   }
   
   /**
+   * Warning, will cause strange behavior if you call while another search is ongoing
    * @param {String} searchTerm
    * @param {Number} num
    */
