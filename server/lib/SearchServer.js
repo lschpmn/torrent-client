@@ -12,12 +12,13 @@ function search(searchTerm, num = 30) {
   let radio = new Emitter();
   let sites = [new PirateBay(radio)];
   let sitesDone = 0;
+  console.log(`Created search for ${searchTerm}`);
   
   radio.on('done', () => {
     sitesDone++;
     
     if(sitesDone === sites.length) {
-      console.log('Everything is done!');
+      console.log('All sites done');
       radio.emit('stop');
     }
   });

@@ -49,9 +49,9 @@ class PirateBay {
    * @private
    */
   _goto(page = 0) {
-    const results = [];
-    
     if(this.stopped) return Promise.resolve();
+    
+    const results = [];
     
     console.log(`URL: ${URL(this.escapedSearchTerm, page)}`);
     
@@ -73,10 +73,12 @@ class PirateBay {
           });
         });
         
-        console.log(`Got ${results.length}, total is ${this.resultsNum} out of ${this.num}`);
+        this.resultsNum += results.length;
+        
+        console.log(`Got ${results.length}, total now from PirateBay is ${this.resultsNum} out of ${this.num}`);
   
         this.radio.emit(`results`, results);
-        this.resultsNum += results.length;
+        
         if(this.resultsNum < this.num && results.length !== 0) return this._goto(++page);
       });
   }

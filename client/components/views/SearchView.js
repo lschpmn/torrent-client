@@ -1,6 +1,5 @@
 'use strict';
 
-import axios from 'axios';
 import React, {Component} from 'react';
 
 export default class SearchView extends Component {
@@ -18,9 +17,21 @@ export default class SearchView extends Component {
     //prevents form being submitted and refreshing page
     e.preventDefault();
     
-    axios.post('http://localhost:3000/api/search', {searchTerm: this.state.search})
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
+    const evtSource = new EventSource(`http://localhost:3000/api/search?search=${encodeURIComponent(this.state.search)}&num=50`);
+    
+    evtSource.onmessage = function(e) {
+      console.log(e);
+      
+      if(e.data === 'done') {
+        console.log('done');
+        evtSource.close();
+      }
+    };
+    
+    evtSource.onerror = function(e) {
+      console.log(e);
+      evtSource.close();
+    };
   }
   
   render() {

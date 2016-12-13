@@ -15,25 +15,27 @@ class Server {
     });
   
     app.use(bodyParser.json());
-    app.post('/api/search', this.searchRequest.bind(this));
+    app.get('/api/search', this.searchRequest.bind(this));
     
     console.log('Starting server on port 3000');
     app.listen(3000);
   }
   
   searchRequest(req, res) {
-    let searchEmitter = /**@type {Emitter}*/ search(req.body.searchTerm, req.body.num);
+    let searchEmitter = /**@type {Emitter}*/ search(req.query.search, req.query.num);
     let totalResults = 0;
+    
+    res.header('Content-type', 'text/event-stream');
   
     searchEmitter.on(`results`, results => {
       totalResults += results.length;
-      res.write(JSON.stringify(results));
+      res.write(`data: ${JSON.stringify(results)}\n\n`);
     });
     
     searchEmitter.once('stop', () => {
       console.log(`Got total results: ${totalResults}`);
       searchEmitter = null;
-      res.end();
+      res.write(`data: done\n\n`);
     });
   }
   
