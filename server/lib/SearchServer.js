@@ -31,7 +31,7 @@ function search(searchTerm, num = 30) {
 module.exports = { search };
 
 /**
- * @typedef {Object} torrentResult
+ * @typedef {Object} TorrentResult
  * @property {String} name
  * @property {Number} date - Epoch timestamp in milliseconds
  * @property {String} magnetLink
