@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start-client": "webpack-dev-server --port 5000 --hot --inline",
+    "start-server": "nodemon -w ./server/ -I ./server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
