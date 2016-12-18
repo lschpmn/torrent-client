@@ -44,7 +44,7 @@ export default class SearchView extends Component {
   }
   
   render() {
-    return <div className="row">
+    return <div className="row" style={styles.container}>
       <nav>
         <div className="nav-wrapper blue lighten-1">
           <form onSubmit={this._submit}>
@@ -62,8 +62,15 @@ export default class SearchView extends Component {
         </div>
       </nav>
       
-      <div className="col s12">
-        
+      <div className="col s12" style={styles.content}>
+        {!!this.state.results.length && <ul className="collapsible" id={this.state.id}>
+          {this.state.results.map(/**TorrentResult*/result => (
+            <li key={result.magnetLink}>
+              <div className="collapsible-header">{result.name}</div>
+              <div className="collapsible-body">{result.name} and more!</div>
+            </li>
+          ))}
+        </ul>}
       </div>
     </div>;
   }
@@ -76,3 +83,16 @@ function safeParseJson(string) {
     return [];
   }
 }
+
+const styles = {
+  container: {
+    height: '100%',
+    margin: '1em',
+    marginBottom: '-2em',
+    overflow: 'auto',
+  },
+  
+  content: {
+    margin: '1em 0',
+  },
+};

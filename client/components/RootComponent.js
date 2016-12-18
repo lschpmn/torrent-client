@@ -10,9 +10,16 @@ export default class RootComponent extends Component {
         <Siderbar />
       </div>
       
-      <div className="col s9">
+      <div className="col s9" style={container}>
         {this.props.children}
       </div>
     </div>;
   }
 }
+
+const container = {
+  height: '100%',
+  overflow: 'hidden',
+  margin: 0,
+  padding: 0,
+};
