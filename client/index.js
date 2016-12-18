@@ -3,8 +3,8 @@
 import React from 'react';
 import {render} from 'react-dom';
 import RootComponent from './components/RootComponent';
-import SearchView from './components/views/SearchView';
-import TorrentView from './components/views/TorrentView';
+import SearchView from './components/search/SearchView';
+import TorrentView from './components/download/TorrentView';
 import {browserHistory, IndexRoute, Router, Route} from 'react-router';
 
 //website
