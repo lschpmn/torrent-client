@@ -21,6 +21,10 @@ module.exports = {
       { test: /.tsx?$/, loader: 'ts-loader', },
     ],
   },
+
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.json'],
+  },
   
   serve: {
     port: 5000,
