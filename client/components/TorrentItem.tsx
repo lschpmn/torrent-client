@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Paper, Toolbar } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 import { Torrent } from '../../types';
 
 type Props = {
@@ -19,7 +19,7 @@ export default class TorrentItem extends React.Component<Props> {
 
 const styles = {
   container: {
-    margin: '1rem',
-    padding: '1.25rem',
+    margin: '0.75rem',
+    padding: '1rem',
   },
 };
