@@ -19,7 +19,7 @@ const torrents: Torrent[] = [
 export default class App extends React.Component {
   render() {
     return <div>
-      <AppBar position='static' style={{ backgroundColor: green.A400 }}>
+      <AppBar position='static' style={styles.toolbar}>
         <Toolbar>
           <Button style={{ color: 'white', }}>
             <Add /> Add Torrent
@@ -30,3 +30,9 @@ export default class App extends React.Component {
     </div>;
   }
 }
+
+const styles = {
+  toolbar: {
+    backgroundColor: green.A400,
+  },
+};
