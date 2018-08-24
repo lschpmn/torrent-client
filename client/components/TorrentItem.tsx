@@ -15,7 +15,7 @@ export default class TorrentItem extends React.Component<Props> {
 
     return (
       <ListItem button style={styles.container}>
-        <Paper style={{ padding: '1rem', width: '100%' }}>
+        <Paper style={styles.paper}>
           <div style={style}>{torrent.name}</div>
           <div style={style}>{Math.round(torrent.size / 1024) + 'Kb'}</div>
         </Paper>
@@ -28,5 +28,10 @@ const styles = {
   container: {
     paddingLeft: 0,
     paddingRight: 0,
+  },
+  paper: {
+    borderRadius: 0,
+    padding: '1rem',
+    width: '100%',
   },
 };

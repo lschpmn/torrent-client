@@ -30,7 +30,7 @@ export default class App extends React.Component {
           </Button>
         </Toolbar>
       </AppBar>
-      <Paper style={{ padding: '1rem' }}>
+      <Paper style={styles.sectionTitle}>
         <div style={styles.section}>Name</div>
         <div style={styles.section}>Size</div>
       </Paper>
@@ -51,6 +51,10 @@ const styles = {
   section: {
     display: 'inline-block',
     width: '50%',
+  },
+  sectionTitle: {
+    borderRadius: 0,
+    padding: '1rem',
   },
   toolbar: {
     backgroundColor: green.A400,
