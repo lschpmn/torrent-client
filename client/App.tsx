@@ -1,13 +1,17 @@
-import * as React from 'react';
-import { green } from '@material-ui/core/colors/';
-import Add from '@material-ui/icons/Add';
-import { Torrent } from '../types';
-import TorrentItem from './components/TorrentItem';
+import AppBar from '@material-ui/core/AppBar/AppBar';
+import green from '@material-ui/core/colors/green';
+import red from '@material-ui/core/colors/red';
+import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List/List';
 import Paper from '@material-ui/core/Paper/Paper';
-import AppBar from '@material-ui/core/AppBar/AppBar';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
-import Button from '@material-ui/core/Button/Button';
+import Add from '@material-ui/icons/Add';
+import Delete from '@material-ui/icons/Delete';
+import Pause from '@material-ui/icons/Pause';
+import Play from '@material-ui/icons/PlayArrow';
+import * as React from 'react';
+import { Torrent } from '../types';
+import TorrentItem from './components/TorrentItem';
 
 const torrents: Torrent[] = [
   {
@@ -25,9 +29,18 @@ export default class App extends React.Component {
     return <div>
       <AppBar position='static' style={styles.toolbar}>
         <Toolbar>
-          <Button style={{ color: 'white', }}>
-            <Add /> Add Torrent
-          </Button>
+          <IconButton style={{ color: 'white' }}>
+            <Add/>
+          </IconButton>
+          <IconButton style={{ color: red['500'] }}>
+            <Delete/>
+          </IconButton>
+          <IconButton style={{ color: 'white' }}>
+            <Pause/>
+          </IconButton>
+          <IconButton style={{ color: 'white' }}>
+            <Play/>
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Paper style={styles.sectionTitle}>

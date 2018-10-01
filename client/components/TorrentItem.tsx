@@ -1,7 +1,7 @@
+import Checkbox from '@material-ui/core/Checkbox';
+import ListItem from '@material-ui/core/ListItem/ListItem';
 import * as React from 'react';
 import { Torrent } from '../../types';
-import ListItem from '@material-ui/core/ListItem/ListItem';
-import Checkbox from '@material-ui/core/Checkbox';
 
 type Props = {
   style?: React.CSSProperties,
