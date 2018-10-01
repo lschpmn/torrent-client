@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Torrent } from '../../types';
-import Paper from '@material-ui/core/Paper/Paper';
 import ListItem from '@material-ui/core/ListItem/ListItem';
+import Checkbox from '@material-ui/core/Checkbox';
 
 type Props = {
   style?: React.CSSProperties,
@@ -14,11 +14,12 @@ export default class TorrentItem extends React.Component<Props> {
     console.log(torrent);
 
     return (
-      <ListItem button style={styles.container}>
-        <Paper style={styles.paper}>
-          <div style={style}>{torrent.name}</div>
-          <div style={style}>{Math.round(torrent.size / 1024) + 'Kb'}</div>
-        </Paper>
+      <ListItem button style={styles.container} divider>
+        <Checkbox
+
+        />
+        <div style={style}>{torrent.name}</div>
+        <div style={style}>{Math.round(torrent.size / 1024) + 'Kb'}</div>
       </ListItem>
     );
   }
