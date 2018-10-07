@@ -1,6 +1,7 @@
 import AppBar from '@material-ui/core/AppBar/AppBar';
 import green from '@material-ui/core/colors/green';
 import red from '@material-ui/core/colors/red';
+import grey from '@material-ui/core/colors/grey';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List/List';
 import Paper from '@material-ui/core/Paper/Paper';
@@ -24,21 +25,43 @@ const torrents: Torrent[] = [
   },
 ];
 
-export default class App extends React.Component {
+type State = {
+  selected: { [i: number]: boolean },
+};
+
+export default class App extends React.Component<{}, State> {
+  state = {
+    selected: {},
+  };
+
+  toggleSelected = (i: number) => {
+    this.setState({
+      selected: {
+        ...this.state.selected,
+        [i]: !this.state.selected[i],
+      },
+    });
+  };
+
   render() {
+    const { selected } = this.state;
+    const greyOut = Object.keys(selected).every(select => !selected[select]);
+    console.log(this.state);
+
     return <div>
       <AppBar position='static' style={styles.toolbar}>
         <Toolbar>
           <IconButton style={{ color: 'white' }}>
             <Add/>
           </IconButton>
-          <IconButton style={{ color: red['500'] }}>
+          <div style={{ flexGrow: 1 }} />
+          <IconButton style={{ color: greyOut ? grey['500'] : red['500'] }}>
             <Delete/>
           </IconButton>
-          <IconButton style={{ color: 'white' }}>
+          <IconButton style={{ color: greyOut ? grey['500'] : 'white' }}>
             <Pause/>
           </IconButton>
-          <IconButton style={{ color: 'white' }}>
+          <IconButton style={{ color: greyOut ? grey['500'] : 'white' }}>
             <Play/>
           </IconButton>
         </Toolbar>
@@ -51,6 +74,8 @@ export default class App extends React.Component {
         {torrents.map((torrent, i) => (
           <TorrentItem
             key={i}
+            onPress={() => this.toggleSelected(i)}
+            selected={!!selected[i]}
             style={styles.section}
             torrent={torrent}
           />
