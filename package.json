@@ -24,7 +24,8 @@
     "ts-loader": "5.2.1",
     "typescript": "3.1.1",
     "webpack": "4.20.2",
-    "webpack-serve": "2.0.2"
+    "webpack-serve": "2.0.2",
+    "webtorrent": "0.102.4"
   },
   "devDependencies": {
     "file-loader": "2.0.0",
