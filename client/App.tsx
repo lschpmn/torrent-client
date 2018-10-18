@@ -33,14 +33,24 @@ const torrents: Torrent[] = [
 ];
 
 type State = {
+  link: string,
   selected: { [i: number]: boolean },
   showDialog: boolean,
 };
 
 export default class App extends React.Component<{}, State> {
   state = {
+    link: '',
     selected: {},
     showDialog: false,
+  };
+
+  editLink = (e: any) => this.setState({ link: e.target.value });
+
+  onSubmit = () => {
+    this.toggleDialog();
+    console.log(`Submitted ${this.state.link}`);
+    this.setState({ link: '' });
   };
 
   toggleDialog = () => this.setState({ showDialog: !this.state.showDialog });
@@ -107,7 +117,9 @@ export default class App extends React.Component<{}, State> {
             margin="dense"
             id="name"
             label="Magnet Link"
+            onChange={this.editLink}
             type="text"
+            value={this.state.link}
             fullWidth
           />
         </DialogContent>
@@ -115,7 +127,7 @@ export default class App extends React.Component<{}, State> {
           <Button onClick={this.toggleDialog} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.toggleDialog} color="primary">
+          <Button onClick={this.onSubmit} color="primary">
             Add
           </Button>
         </DialogActions>
