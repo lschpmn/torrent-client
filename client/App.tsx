@@ -1,11 +1,18 @@
-import AppBar from '@material-ui/core/AppBar/AppBar';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
 import grey from '@material-ui/core/colors/grey';
+import red from '@material-ui/core/colors/red';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List/List';
-import Paper from '@material-ui/core/Paper/Paper';
-import Toolbar from '@material-ui/core/Toolbar/Toolbar';
+import List from '@material-ui/core/List';
+import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import Toolbar from '@material-ui/core/Toolbar';
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
 import Pause from '@material-ui/icons/Pause';
@@ -27,12 +34,16 @@ const torrents: Torrent[] = [
 
 type State = {
   selected: { [i: number]: boolean },
+  showDialog: boolean,
 };
 
 export default class App extends React.Component<{}, State> {
   state = {
     selected: {},
+    showDialog: false,
   };
+
+  toggleDialog = () => this.setState({ showDialog: !this.state.showDialog });
 
   toggleSelected = (i: number) => {
     this.setState({
@@ -51,10 +62,10 @@ export default class App extends React.Component<{}, State> {
     return <div>
       <AppBar position='static' style={styles.toolbar}>
         <Toolbar>
-          <IconButton style={{ color: 'white' }}>
+          <IconButton style={{ color: 'white' }} onMouseDown={this.toggleDialog}>
             <Add/>
           </IconButton>
-          <div style={{ flexGrow: 1 }} />
+          <div style={{ flexGrow: 1 }}/>
           <IconButton style={{ color: greyOut ? grey['500'] : red['500'] }}>
             <Delete/>
           </IconButton>
@@ -81,11 +92,42 @@ export default class App extends React.Component<{}, State> {
           />
         ))}
       </List>
+      <Dialog
+        fullWidth
+        onClose={this.toggleDialog}
+        open={this.state.showDialog}
+      >
+        <DialogTitle>Add New Torrent</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Paste magnet link here
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Magnet Link"
+            type="text"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.toggleDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={this.toggleDialog} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>;
   }
 }
 
 const styles = {
+  dialog: {
+    width: '50rem',
+  },
   section: {
     display: 'inline-block',
     width: '50%',
