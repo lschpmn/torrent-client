@@ -1,15 +1,26 @@
+import { join } from 'path';
 
 
 export async function addTorrent(magnetLink: string) {
-  const response = await fetch('http://localhost:3000/add', {
+  const response = await post('/add', { magnetLink });
+
+  console.log(response);
+}
+
+export async function setup() {
+  const response = await post('/setup');
+
+  console.log(response);
+}
+
+async function post(path: string, body?: any): Promise<any> {
+  const response = await fetch(`http://${join('localhost:3000', path)}`, {
     method: 'POST',
-    body: JSON.stringify({
-      magnetLink,
-    }),
+    body: body ? JSON.stringify(body) : null,
     headers: {
-      "Content-Type": "application/json"
+      'Content-Type': 'application/json',
     },
   });
 
-  console.log(response);
+  return response.json();
 }

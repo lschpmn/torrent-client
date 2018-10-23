@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/express": "4.16.0",
+    "@types/webtorrent": "0.98.4",
     "file-loader": "2.0.0",
     "react": "16.5.2",
     "react-dom": "16.5.2",
