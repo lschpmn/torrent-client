@@ -1,10 +1,16 @@
+import bodyParser = require('body-parser');
+import cors = require('cors');
 import express = require('express');
-import bodyParser = require('body-parser')
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
-app.post('/start', (req, res) => {
-
+app.post('/add', (req, res) => {
+  console.log(req.body);
+  res.send('hi');
 });
+
+app.listen(3000);
+console.log('Server started on port 3000');

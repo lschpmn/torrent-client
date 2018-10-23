@@ -20,6 +20,7 @@ import Play from '@material-ui/icons/PlayArrow';
 import * as React from 'react';
 import { Torrent } from '../types';
 import TorrentItem from './components/TorrentItem';
+import { addTorrent } from './lib/thunks';
 
 const torrents: Torrent[] = [
   {
@@ -51,6 +52,8 @@ export default class App extends React.Component<{}, State> {
     this.toggleDialog();
     console.log(`Submitted ${this.state.link}`);
     this.setState({ link: '' });
+    addTorrent(this.state.link)
+      .catch(err => console.log(err));
   };
 
   toggleDialog = () => this.setState({ showDialog: !this.state.showDialog });
