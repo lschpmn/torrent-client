@@ -7,12 +7,6 @@ export async function addTorrent(magnetLink: string) {
   console.log(response);
 }
 
-export async function setup() {
-  const response = await post('/setup');
-
-  console.log(response);
-}
-
 async function post(path: string, body?: any): Promise<any> {
   const response = await fetch(`http://${join('localhost:3000', path)}`, {
     method: 'POST',

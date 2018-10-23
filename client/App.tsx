@@ -20,7 +20,7 @@ import Play from '@material-ui/icons/PlayArrow';
 import * as React from 'react';
 import { Torrent } from '../types';
 import TorrentItem from './components/TorrentItem';
-import { addTorrent, setup } from './lib/thunks';
+import { addTorrent } from './lib/thunks';
 
 const torrents: Torrent[] = [
   {
@@ -45,11 +45,6 @@ export default class App extends React.Component<{}, State> {
     selected: {},
     showDialog: false,
   };
-
-  componentDidMount() {
-    setup()
-      .catch(console.log);
-  }
 
   editLink = (e: any) => this.setState({ link: e.target.value });
 
