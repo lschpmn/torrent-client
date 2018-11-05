@@ -1,3 +1,4 @@
+const {ipcRenderer} = require('electron');
 import { join } from 'path';
 
 
@@ -8,13 +9,5 @@ export async function addTorrent(magnetLink: string) {
 }
 
 async function post(path: string, body?: any): Promise<any> {
-  const response = await fetch(`http://${join('localhost:3000', path)}`, {
-    method: 'POST',
-    body: body ? JSON.stringify(body) : null,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  return response.json();
+  ipcRenderer.send('add', body);
 }

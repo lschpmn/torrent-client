@@ -28,5 +28,7 @@ module.exports = {
   
   serve: {
     port: 5000,
-  }
+  },
+
+  target: 'electron-renderer',
 };
