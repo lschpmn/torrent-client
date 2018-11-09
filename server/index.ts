@@ -1,6 +1,31 @@
-import { ipcMain as main } from 'electron';
+import * as io from 'socket.io';
+import { createServer } from 'http';
 
-// TODO: Replace this with websocket
-main.on('add', (magnetLink: string) => {
-  console.log(magnetLink);
-});
+let retries = 10;
+
+async function serverRestarter() {
+  try {
+    await startServer(3000);
+  } catch (err) {
+    console.log(err);
+    retries--;
+    console.log(`${retries} retries left`);
+    if (retries > 0) serverRestarter();
+    else console.log('shutting down');
+  }
+}
+
+async function startServer(port: number) {
+  const server = createServer();
+  const socket = io(server);
+  server.listen(port);
+  console.log(`listening on port ${port}`);
+
+  socket.on('connection', socket => {
+    socket.on('add', (magnetLink: string) => {
+      console.log(magnetLink);
+    });
+  });
+}
+
+serverRestarter();
