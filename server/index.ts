@@ -17,11 +17,11 @@ async function serverRestarter() {
 
 async function startServer(port: number) {
   const server = createServer();
-  const socket = io(server);
+  const ioSocket = io(server);
   server.listen(port);
   console.log(`listening on port ${port}`);
 
-  socket.on('connection', socket => {
+  ioSocket.on('connection', socket => {
     socket.on('add', (magnetLink: string) => {
       console.log(magnetLink);
     });
