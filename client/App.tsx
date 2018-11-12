@@ -51,9 +51,9 @@ export default class App extends React.Component<{}, State> {
   onSubmit = () => {
     this.toggleDialog();
     console.log(`Submitted ${this.state.link}`);
-    this.setState({ link: '' });
     addTorrent(this.state.link)
       .catch(err => console.log(err));
+    this.setState({ link: '' });
   };
 
   toggleDialog = () => this.setState({ showDialog: !this.state.showDialog });
