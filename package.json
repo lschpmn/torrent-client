@@ -17,6 +17,7 @@
     "axios": "0.18.0",
     "cheerio": "0.22.0",
     "electron": "3.0.8",
+    "fs-extra": "7.0.1",
     "moment": "2.22.2",
     "node-fetch": "2.2.1",
     "socket.io": "2.1.1",
@@ -27,6 +28,7 @@
     "webtorrent": "0.102.4"
   },
   "devDependencies": {
+    "@types/fs-extra": "5.0.4",
     "@types/socket.io": "2.1.0",
     "@types/webtorrent": "0.98.4",
     "file-loader": "2.0.0",
