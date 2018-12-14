@@ -8,7 +8,6 @@ function createWindow() {
 
   win.loadURL('http://localhost:5000');
 
-  win.setMenu(null);
   win.webContents.openDevTools();
 
   win.on('closed', () => {

@@ -85,9 +85,6 @@ export default class App extends React.Component<{}, State> {
           <IconButton style={{ color: greyOut ? grey['500'] : 'white' }}>
             <Pause/>
           </IconButton>
-          <IconButton style={{ color: greyOut ? grey['500'] : 'white' }}>
-            <Play/>
-          </IconButton>
         </Toolbar>
       </AppBar>
       <Paper style={styles.sectionTitle}>

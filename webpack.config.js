@@ -25,8 +25,9 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
   },
-  
-  serve: {
+
+  devServer: {
+    contentBase: join(__dirname, 'client'),
     port: 5000,
   },
 
