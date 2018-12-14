@@ -16,7 +16,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
 import Pause from '@material-ui/icons/Pause';
-import Play from '@material-ui/icons/PlayArrow';
+import Settings from '@material-ui/icons/Settings';
 import * as React from 'react';
 import { Torrent } from '../types';
 import TorrentItem from './components/TorrentItem';
@@ -52,7 +52,7 @@ export default class App extends React.Component<{}, State> {
     this.toggleDialog();
     console.log(`Submitted ${this.state.link}`);
     addTorrent(this.state.link)
-      .catch(err => console.log(err));
+      .catch(console.log);
     this.setState({ link: '' });
   };
 
@@ -75,16 +75,22 @@ export default class App extends React.Component<{}, State> {
     return <div>
       <AppBar position='static' style={styles.toolbar}>
         <Toolbar>
-          <IconButton style={{ color: 'white' }} onMouseDown={this.toggleDialog}>
-            <Add/>
-          </IconButton>
-          <div style={{ flexGrow: 1 }}/>
-          <IconButton style={{ color: greyOut ? grey['500'] : red['500'] }}>
-            <Delete/>
-          </IconButton>
           <IconButton style={{ color: greyOut ? grey['500'] : 'white' }}>
             <Pause/>
           </IconButton>
+          <IconButton style={{ color: greyOut ? grey['500'] : red['500'] }}>
+            <Delete/>
+          </IconButton>
+
+          <div style={{ flexGrow: 1 }}/>
+
+          <IconButton style={{ color: 'white' }} onMouseDown={this.toggleDialog}>
+            <Add/>
+          </IconButton>
+          <IconButton style={{ color: 'white' }}>
+            <Settings/>
+          </IconButton>
+
         </Toolbar>
       </AppBar>
       <Paper style={styles.sectionTitle}>
