@@ -1,10 +1,14 @@
 const { app, BrowserWindow } = require('electron');
 
 function createWindow() {
-  const win = new BrowserWindow({ width: 1280, height: 720 });
+  const win = new BrowserWindow({
+    height: 720,
+    width: 1280,
+  });
 
   win.loadURL('http://localhost:5000');
 
+  win.setMenu(null);
   win.webContents.openDevTools();
 
   win.on('closed', () => {
