@@ -19,6 +19,7 @@ import Pause from '@material-ui/icons/Pause';
 import Settings from '@material-ui/icons/Settings';
 import * as React from 'react';
 import { Torrent } from '../types';
+import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
 import { addTorrent } from './lib/thunks';
 
@@ -37,6 +38,7 @@ type State = {
   link: string,
   selected: { [i: number]: boolean },
   showDialog: boolean,
+  showSettings: boolean,
 };
 
 export default class App extends React.Component<{}, State> {
@@ -44,6 +46,7 @@ export default class App extends React.Component<{}, State> {
     link: '',
     selected: {},
     showDialog: false,
+    showSettings: true,
   };
 
   editLink = (e: any) => this.setState({ link: e.target.value });
@@ -58,6 +61,8 @@ export default class App extends React.Component<{}, State> {
 
   toggleDialog = () => this.setState({ showDialog: !this.state.showDialog });
 
+  toggleSettings = () => this.setState({ showSettings: !this.state.showSettings });
+
   toggleSelected = (i: number) => {
     this.setState({
       selected: {
@@ -70,7 +75,6 @@ export default class App extends React.Component<{}, State> {
   render() {
     const { selected } = this.state;
     const greyOut = Object.keys(selected).every(select => !selected[select]);
-    console.log(this.state);
 
     return <div>
       <AppBar position='static' style={styles.toolbar}>
@@ -87,7 +91,7 @@ export default class App extends React.Component<{}, State> {
           <IconButton style={{ color: 'white' }} onMouseDown={this.toggleDialog}>
             <Add/>
           </IconButton>
-          <IconButton style={{ color: 'white' }}>
+          <IconButton style={{ color: 'white' }} onClick={this.toggleSettings}>
             <Settings/>
           </IconButton>
 
@@ -138,6 +142,7 @@ export default class App extends React.Component<{}, State> {
           </Button>
         </DialogActions>
       </Dialog>
+      <SettingsModal onClose={this.toggleSettings} open={this.state.showSettings}/>
     </div>;
   }
 }

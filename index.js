@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, shell } = require('electron');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -15,4 +15,24 @@ function createWindow() {
   });
 }
 
+ipcMain.on('explorer', (event, path) => {
+  const folder = dialog.showOpenDialog({
+    defaultPath: path,
+    properties: ['openDirectory']
+  });
+  console.log(`folder ${folder}`);
+
+  event.returnValue = folder;
+});
+
 app.on('ready', createWindow);
+
+setTimeout(() => {
+  const path = dialog.showOpenDialog({
+    defaultPath: __dirname,
+    properties: ['openDirectory']
+  });
+
+  console.log(path);
+}, 3000);
+

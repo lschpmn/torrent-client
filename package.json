@@ -28,6 +28,7 @@
     "webtorrent": "0.103.0"
   },
   "devDependencies": {
+    "@types/electron": "1.6.10",
     "@types/fs-extra": "5.0.4",
     "@types/socket.io": "2.1.2",
     "@types/webtorrent": "0.98.4",
