@@ -10,7 +10,7 @@ async function serverRestarter() {
     console.log(err);
     retries--;
     console.log(`${retries} retries left`);
-    if (retries > 0) serverRestarter();
+    if (retries > 0) serverRestarter().catch();
     else console.log('shutting down');
   }
 }
