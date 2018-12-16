@@ -14,13 +14,9 @@
   "dependencies": {
     "@material-ui/core": "3.6.2",
     "@material-ui/icons": "3.0.1",
-    "axios": "0.18.0",
-    "cheerio": "0.22.0",
     "electron": "3.0.11",
     "fs-extra": "7.0.1",
     "moment": "2.23.0",
-    "node-fetch": "2.3.0",
-    "socket.io": "2.2.0",
     "ts-loader": "5.3.1",
     "typescript": "3.2.2",
     "webpack": "4.27.1",

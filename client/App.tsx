@@ -21,7 +21,6 @@ import * as React from 'react';
 import { Torrent } from '../types';
 import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
-import { addTorrent } from './lib/thunks';
 
 const torrents: Torrent[] = [
   {
@@ -54,8 +53,6 @@ export default class App extends React.Component<{}, State> {
   onSubmit = () => {
     this.toggleDialog();
     console.log(`Submitted ${this.state.link}`);
-    addTorrent(this.state.link)
-      .catch(console.log);
     this.setState({ link: '' });
   };
 
