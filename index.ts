@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, ipcMain, shell } = require('electron');
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -26,13 +26,3 @@ ipcMain.on('explorer', (event, path) => {
 });
 
 app.on('ready', createWindow);
-
-setTimeout(() => {
-  const path = dialog.showOpenDialog({
-    defaultPath: __dirname,
-    properties: ['openDirectory']
-  });
-
-  console.log(path);
-}, 3000);
-
