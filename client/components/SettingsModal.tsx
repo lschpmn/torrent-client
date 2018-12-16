@@ -4,32 +4,21 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as React from 'react';
-import { ipcRenderer } from 'electron';
+import { connect } from 'react-redux';
+import { queryDestinationPath } from '../lib/thunks';
+import { State } from '../lib/types';
 
 type Props = {
+  downloadDestination?: string,
   onClose: () => void,
   open: boolean,
+  queryDestinationPath: typeof queryDestinationPath,
 };
 
-type State = {
-  path: null,
-};
-
-export default class SettingsModal extends React.Component<Props, State> {
-  state = {
-    path: null,
-  };
-
-  openExplorer = () => {
-    ipcRenderer.once('explorer', (event, paths) => {
-      console.log(paths);
-      if (paths) this.setState({ path: paths[0] });
-    });
-
-    ipcRenderer.send('explorer');
-  };
+export class SettingsModal extends React.Component<Props> {
 
   render() {
+    console.log(this.props.downloadDestination);
     return <Dialog
       fullWidth
       onClose={() => console.log('close')}
@@ -40,8 +29,8 @@ export default class SettingsModal extends React.Component<Props, State> {
         <div style={{ flex: 1 }}>
           Download Location
         </div>
-        <div style={{ flex: 1 }} onClick={this.openExplorer}>
-          {this.state.path || 'Click to set download destination' }
+        <div style={{ flex: 1 }} onClick={this.props.queryDestinationPath}>
+          {this.props.downloadDestination || 'Click to set download destination' }
         </div>
       </DialogContent>
       <DialogActions>
@@ -52,3 +41,12 @@ export default class SettingsModal extends React.Component<Props, State> {
     </Dialog>;
   }
 }
+
+export default connect(
+  (state: State) => ({
+    downloadDestination: state.downloadDestination,
+  }),
+  {
+    queryDestinationPath,
+  },
+)(SettingsModal);
