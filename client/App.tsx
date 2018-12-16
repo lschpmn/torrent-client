@@ -18,9 +18,11 @@ import Delete from '@material-ui/icons/Delete';
 import Pause from '@material-ui/icons/Pause';
 import Settings from '@material-ui/icons/Settings';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Torrent } from '../types';
 import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
+import { getState } from './lib/thunks';
 
 const torrents: Torrent[] = [
   {
@@ -33,6 +35,10 @@ const torrents: Torrent[] = [
   },
 ];
 
+type Props = {
+  getState: typeof getState,
+};
+
 type State = {
   link: string,
   selected: { [i: number]: boolean },
@@ -40,13 +46,17 @@ type State = {
   showSettings: boolean,
 };
 
-export default class App extends React.Component<{}, State> {
+export class App extends React.Component<Props, State> {
   state = {
     link: '',
     selected: {},
     showDialog: false,
-    showSettings: true,
+    showSettings: false,
   };
+
+  componentDidMount() {
+    this.props.getState();
+  }
 
   editLink = (e: any) => this.setState({ link: e.target.value });
 
@@ -160,3 +170,10 @@ const styles = {
     backgroundColor: green.A400,
   },
 };
+
+export default connect(
+  state => ({}),
+  {
+    getState,
+  }
+)(App);
