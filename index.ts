@@ -16,13 +16,12 @@ function createWindow() {
 }
 
 ipcMain.on('explorer', (event, path) => {
-  const folder = dialog.showOpenDialog({
+  dialog.showOpenDialog({
     defaultPath: path,
-    properties: ['openDirectory']
+    properties: ['openDirectory'],
+  }, (paths) => {
+    event.sender.send('explorer', paths);
   });
-  console.log(`folder ${folder}`);
-
-  event.returnValue = folder;
 });
 
 app.on('ready', createWindow);
