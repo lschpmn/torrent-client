@@ -2,6 +2,7 @@
   "compilerOptions": {
     "inlineSourceMap": true,
     "lib": ["es2015", "dom"],
-    "jsx": "react"
+    "jsx": "react",
+    "strictNullChecks": true
   }
 }
