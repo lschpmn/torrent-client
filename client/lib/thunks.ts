@@ -1,6 +1,12 @@
 import { ipcRenderer } from 'electron';
 import { SET_DOWNLOAD_DESTINATION, SET_STATE } from './reducers';
 
+export function addTorrent(magnetLink: string) {
+  return dispatch => {
+    console.log(`Submitted ${magnetLink}`);
+  };
+}
+
 export function getState() {
   return dispatch => {
     ipcRenderer.once('state', (event, state) => {
