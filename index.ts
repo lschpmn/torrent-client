@@ -9,6 +9,7 @@ lowdb(adapter)
     db = _db;
     db.defaults({
       downloadDestination: null,
+      torrents: [],
     }).write();
   })
   .catch(err => {
@@ -49,6 +50,10 @@ ipcMain.on('explorer', (event, path) => {
       event.sender.send('explorer', paths[0]);
     }
   });
+});
+
+ipcMain.on('torrent-add', (event, x) => {
+
 });
 
 app.on('ready', createWindow);

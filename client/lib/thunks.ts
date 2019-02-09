@@ -3,7 +3,11 @@ import { SET_DOWNLOAD_DESTINATION, SET_STATE } from './reducers';
 
 export function addTorrent(magnetLink: string) {
   return dispatch => {
-    console.log(`Submitted ${magnetLink}`);
+    ipcRenderer.once('torrent-add', (event) => {
+
+    });
+
+    ipcRenderer.send('torrent-add', { magnetLink });
   };
 }
 
