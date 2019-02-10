@@ -55,11 +55,11 @@ export class AddTorrentModal extends React.Component<Props, State> {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={this.props.onClose} color="primary">
-          Cancel
-        </Button>
         <Button onClick={this.onSubmit} color="primary">
           Add
+        </Button>
+        <Button onClick={this.props.onClose} color="primary">
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>;
