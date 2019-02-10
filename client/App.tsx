@@ -1,4 +1,5 @@
 import AppBar from '@material-ui/core/AppBar';
+import Checkbox from '@material-ui/core/Checkbox';
 import green from '@material-ui/core/colors/green';
 import grey from '@material-ui/core/colors/grey';
 import red from '@material-ui/core/colors/red';
@@ -8,10 +9,11 @@ import Paper from '@material-ui/core/Paper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import Pause from '@material-ui/icons/Pause';
 import Settings from '@material-ui/icons/Settings';
+import { isEqual } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Torrent } from '../types';
@@ -28,7 +30,7 @@ type Props = {
 };
 
 type State = {
-  selected: { [i: number]: boolean },
+  selected: { [i: string]: boolean },
   showAddTorrent: boolean,
   showSettings: boolean,
   sort: string,
@@ -61,6 +63,16 @@ export class App extends React.Component<Props, State> {
     });
 
     this.setState({ selected: {} });
+  };
+
+  selectAll = () => {
+    const selected = {};
+    this.props.torrents
+      .map(torrent => torrent.magnetLink)
+      .forEach(magnetLink => selected[magnetLink] = true);
+
+    if (isEqual(selected, this.state.selected)) this.setState({ selected: {} });
+    else this.setState({ selected });
   };
 
   toggleAddTorrent = () => this.setState({ showAddTorrent: !this.state.showAddTorrent });
@@ -101,7 +113,15 @@ export class App extends React.Component<Props, State> {
           </IconButton>
         </Toolbar>
       </AppBar>
+
       <Paper style={styles.sectionTitle}>
+        <div>
+          <Checkbox
+            checked={false}
+            onChange={this.selectAll}
+            style={{ width: '2rem' }}
+          />
+        </div>
         <div style={{ ...styles.section, cursor: undefined }}>
           Name
         </div>
@@ -120,6 +140,7 @@ export class App extends React.Component<Props, State> {
           }
         </div>
       </Paper>
+
       <List>
         {torrents
           .sort((a, b) => sortAscending ? a[sort] - b[sort] : b[sort] - a[sort])
@@ -157,7 +178,7 @@ const styles = {
     borderRadius: 0,
     display: 'flex',
     flexDirection: 'row' as 'row',
-    padding: '1rem',
+    padding: '1rem 0',
   },
   toolbar: {
     backgroundColor: green.A400,

@@ -19,6 +19,7 @@ export default class TorrentItem extends React.Component<Props> {
       <ListItem button style={styles.container} divider onMouseDown={onPress}>
         <Checkbox
           checked={selected}
+          style={styles.checkbox}
         />
         <div style={style}>{torrent.name}</div>
         <div style={style}>{getSizeStr(torrent.size)}</div>
@@ -29,6 +30,9 @@ export default class TorrentItem extends React.Component<Props> {
 }
 
 const styles = {
+  checkbox: {
+    width: '2rem',
+  },
   container: {
     paddingLeft: 0,
     paddingRight: 0,
