@@ -6,7 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { queryDestinationPath } from '../lib/thunks';
-import { State } from '../lib/types';
+import { ReducerState } from '../lib/types';
 
 type Props = {
   downloadDestination?: string,
@@ -38,7 +38,7 @@ export const SettingsModal = ({ downloadDestination, onClose, open, queryDestina
   </Dialog>;
 
 export default connect(
-  (state: State) => ({
+  (state: ReducerState) => ({
     downloadDestination: state.downloadDestination,
   }),
   {

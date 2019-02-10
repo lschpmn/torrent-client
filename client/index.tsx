@@ -10,6 +10,8 @@ import reducers from './lib/reducers';
 
 const store = createStore(reducers, applyMiddleware(thunk));
 
+store.subscribe(() => console.log(store.getState()));
+
 render(<Provider store={store}>
   <App />
 </Provider>, document.getElementById('react'));

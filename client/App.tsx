@@ -17,20 +17,11 @@ import AddTorrentModal from './components/AddTorrentModal';
 import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
 import { getState } from './lib/thunks';
-
-const torrents: Torrent[] = [
-  {
-    name: 'Last Week Tonight',
-    size: 36923,
-  },
-  {
-    name: 'Colbert Report',
-    size: 85349302,
-  },
-];
+import { ReducerState } from './lib/types';
 
 type Props = {
   getState: typeof getState,
+  torrents: Torrent[],
 };
 
 type State = {
@@ -64,6 +55,7 @@ export class App extends React.Component<Props, State> {
   };
 
   render() {
+    const { torrents } = this.props;
     const { selected } = this.state;
     const greyOut = Object.keys(selected).every(select => !selected[select]);
 
@@ -127,7 +119,9 @@ const styles = {
 };
 
 export default connect(
-  state => ({}),
+  (state: ReducerState) => ({
+    torrents: state.torrents,
+  }),
   {
     getState,
   },
