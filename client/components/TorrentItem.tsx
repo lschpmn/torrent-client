@@ -20,7 +20,7 @@ export default class TorrentItem extends React.Component<Props> {
           checked={selected}
         />
         <div style={style}>{torrent.name}</div>
-        <div style={style}>{Math.round(torrent.size / 1024) + 'Kb'}</div>
+        <div style={style}>{getSizeStr(torrent.size)}</div>
       </ListItem>
     );
   }
@@ -37,3 +37,17 @@ const styles = {
     width: '100%',
   },
 };
+
+const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+function getSizeStr(size: number): string {
+  let currentSize = size;
+  let sizeLabel = 0;
+
+  while (currentSize > 1024) {
+    currentSize = currentSize / 1024;
+    sizeLabel++;
+  }
+
+  currentSize = Math.round(currentSize * 100) / 100;
+  return `${currentSize} ${sizes[sizeLabel]}`;
+}
