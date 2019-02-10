@@ -15,32 +15,27 @@ type Props = {
   queryDestinationPath: typeof queryDestinationPath,
 };
 
-export class SettingsModal extends React.Component<Props> {
-
-  render() {
-    console.log(this.props.downloadDestination);
-    return <Dialog
-      fullWidth
-      onClose={() => console.log('close')}
-      open={this.props.open}
-    >
-      <DialogTitle>Settings</DialogTitle>
-      <DialogContent style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ flex: 1 }}>
-          Download Location
-        </div>
-        <div style={{ flex: 1 }} onClick={this.props.queryDestinationPath}>
-          {this.props.downloadDestination || 'Click to set download destination' }
-        </div>
-      </DialogContent>
-      <DialogActions>
-        <Button color="primary" onClick={this.props.onClose}>
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>;
-  }
-}
+export const SettingsModal = ({ downloadDestination, onClose, open, queryDestinationPath }: Props) =>
+  <Dialog
+    fullWidth
+    onClose={onClose}
+    open={open}
+  >
+    <DialogTitle>Settings</DialogTitle>
+    <DialogContent style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{ flex: 1 }}>
+        Download Location
+      </div>
+      <div style={{ flex: 1 }} onClick={queryDestinationPath}>
+        {downloadDestination || 'Click to set download destination' }
+      </div>
+    </DialogContent>
+    <DialogActions>
+      <Button color="primary" onClick={onClose}>
+        Close
+      </Button>
+    </DialogActions>
+  </Dialog>;
 
 export default connect(
   (state: State) => ({
