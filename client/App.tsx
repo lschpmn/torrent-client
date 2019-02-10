@@ -91,6 +91,7 @@ export class App extends React.Component<Props, State> {
   render() {
     const { torrents } = this.props;
     const { selected, sort, sortAscending } = this.state;
+    const allSelected = torrents.every(torrent => selected[torrent.magnetLink]);
     const greyOut = Object.keys(selected).every(select => !selected[select]);
 
     return <div>
@@ -117,7 +118,7 @@ export class App extends React.Component<Props, State> {
       <Paper style={styles.sectionTitle}>
         <div>
           <Checkbox
-            checked={false}
+            checked={torrents.length > 0 && allSelected}
             onChange={this.selectAll}
             style={{ width: '2rem' }}
           />
