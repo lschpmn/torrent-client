@@ -8,6 +8,7 @@ export const SET_STATE = 'SET_STATE';
 const getSize = () => Math.random() * Math.pow(1024, Math.ceil(Math.random() * 5));
 const names = ['Colbert Report', 'Colbert Report 1', 'Colbert Report 2', 'Colbert Report 3', 'Colbert Report 4', 'Colbert Report 5', 'Colbert Report 6', 'Colbert Report 7', 'Colbert Report 8', 'Colbert Report 9'];
 const TEST_TORRENTS = names.map(name => ({
+  added: Date.now() - Math.random() * 1000 * 60 * 60 * 24 * 31,
   name,
   magnetLink: Math.random().toString(35).slice(2),
   size: getSize(),

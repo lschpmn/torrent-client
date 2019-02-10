@@ -8,6 +8,8 @@ import Paper from '@material-ui/core/Paper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import ExpandLess from '@material-ui/icons/ExpandLess';
 import Pause from '@material-ui/icons/Pause';
 import Settings from '@material-ui/icons/Settings';
 import * as React from 'react';
@@ -29,6 +31,8 @@ type State = {
   selected: { [i: number]: boolean },
   showAddTorrent: boolean,
   showSettings: boolean,
+  sort: string,
+  sortAscending: boolean,
 };
 
 export class App extends React.Component<Props, State> {
@@ -36,11 +40,18 @@ export class App extends React.Component<Props, State> {
     selected: {},
     showAddTorrent: false,
     showSettings: false,
+    sort: 'added',
+    sortAscending: false,
   };
 
   componentDidMount() {
     this.props.getState();
   }
+
+  changeSort = (sort: string) => {
+    if (this.state.sort === sort) this.setState({ sortAscending: !this.state.sortAscending });
+    else this.setState({ sort, sortAscending: false });
+  };
 
   deleteTorrents = () => {
     Object.entries(this.state.selected).forEach(([magnetLink, selected]) => {
@@ -67,7 +78,7 @@ export class App extends React.Component<Props, State> {
 
   render() {
     const { torrents } = this.props;
-    const { selected } = this.state;
+    const { selected, sort, sortAscending } = this.state;
     const greyOut = Object.keys(selected).every(select => !selected[select]);
 
     return <div>
@@ -88,23 +99,40 @@ export class App extends React.Component<Props, State> {
           <IconButton style={{ color: 'white' }} onClick={this.toggleSettings}>
             <Settings/>
           </IconButton>
-
         </Toolbar>
       </AppBar>
       <Paper style={styles.sectionTitle}>
-        <div style={styles.section}>Name</div>
-        <div style={styles.section}>Size</div>
+        <div style={{ ...styles.section, cursor: undefined }}>
+          Name
+        </div>
+        <div onMouseDown={() => this.changeSort('size')} style={styles.section}>
+          Size
+          {sort === 'size' && (sortAscending
+            ? <ExpandLess style={styles.expandIcon} />
+            : <ExpandMore style={styles.expandIcon} />)
+          }
+        </div>
+        <div onMouseDown={() => this.changeSort('added')} style={styles.section}>
+          Added
+          {sort === 'added' && (sortAscending
+            ? <ExpandLess style={styles.expandIcon} />
+            : <ExpandMore style={styles.expandIcon} />)
+          }
+        </div>
       </Paper>
       <List>
-        {torrents.map((torrent, i) => (
-          <TorrentItem
-            key={i}
-            onPress={() => this.toggleSelected(torrent.magnetLink)}
-            selected={!!selected[torrent.magnetLink]}
-            style={styles.section}
-            torrent={torrent}
-          />
-        ))}
+        {torrents
+          .sort((a, b) => sortAscending ? a[sort] - b[sort] : b[sort] - a[sort])
+          .map((torrent, i) => (
+            <TorrentItem
+              key={i}
+              onPress={() => this.toggleSelected(torrent.magnetLink)}
+              selected={!!selected[torrent.magnetLink]}
+              style={styles.section}
+              torrent={torrent}
+            />
+          ))
+        }
       </List>
       <AddTorrentModal onClose={this.toggleAddTorrent} open={this.state.showAddTorrent}/>
       <SettingsModal onClose={this.toggleSettings} open={this.state.showSettings}/>
@@ -116,12 +144,19 @@ const styles = {
   dialog: {
     width: '50rem',
   },
+  expandIcon: {
+    fontSize: '2rem',
+  },
   section: {
-    display: 'inline-block',
-    width: '50%',
+    alignItems: 'center',
+    display: 'flex',
+    flex: 1,
+    cursor: 'pointer',
   },
   sectionTitle: {
     borderRadius: 0,
+    display: 'flex',
+    flexDirection: 'row' as 'row',
     padding: '1rem',
   },
   toolbar: {

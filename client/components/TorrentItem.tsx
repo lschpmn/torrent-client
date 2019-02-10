@@ -2,6 +2,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import ListItem from '@material-ui/core/ListItem/ListItem';
 import * as React from 'react';
 import { Torrent } from '../../types';
+import * as moment from 'moment';
 
 type Props = {
   onPress?: () => void,
@@ -21,6 +22,7 @@ export default class TorrentItem extends React.Component<Props> {
         />
         <div style={style}>{torrent.name}</div>
         <div style={style}>{getSizeStr(torrent.size)}</div>
+        <div style={style}>{moment(torrent.added).fromNow()}</div>
       </ListItem>
     );
   }
