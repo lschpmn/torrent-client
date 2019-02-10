@@ -6,48 +6,12 @@ export const SET_DOWNLOAD_DESTINATION = 'SET_DOWNLOAD_DESTINATION';
 export const SET_STATE = 'SET_STATE';
 
 const getSize = () => Math.random() * Math.pow(1024, Math.ceil(Math.random() * 5));
-const TEST_TORRENTS = [
-  {
-    name: 'Colbert Report',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 1',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 2',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 3',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 4',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 5',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 6',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 7',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 8',
-    size: getSize(),
-  },
-  {
-    name: 'Colbert Report 9',
-    size: getSize(),
-  },
-];
+const names = ['Colbert Report', 'Colbert Report 1', 'Colbert Report 2', 'Colbert Report 3', 'Colbert Report 4', 'Colbert Report 5', 'Colbert Report 6', 'Colbert Report 7', 'Colbert Report 8', 'Colbert Report 9'];
+const TEST_TORRENTS = names.map(name => ({
+  name,
+  magnetLink: Math.random().toString(35).slice(2),
+  size: getSize(),
+}));
 
 function downloadDestination(state=null, { payload, type }) {
   switch (type) {
@@ -65,7 +29,7 @@ function torrents(state=TEST_TORRENTS, { payload, type }) {
     case ADD_TORRENT:
       return [...state, payload];
     case DELETE_TORRENT:
-      return [...state.slice(0, payload), ...state.slice(payload)];
+      return state.filter(torrent => torrent.magnetLink !== payload);
     // TODO: setup torrent saving to database
     /*case SET_STATE:
       return payload.torrents;*/

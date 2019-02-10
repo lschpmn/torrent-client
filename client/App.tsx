@@ -16,10 +16,11 @@ import { Torrent } from '../types';
 import AddTorrentModal from './components/AddTorrentModal';
 import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
-import { getState } from './lib/thunks';
+import { deleteTorrent, getState } from './lib/thunks';
 import { ReducerState } from './lib/types';
 
 type Props = {
+  deleteTorrent: typeof deleteTorrent,
   getState: typeof getState,
   torrents: Torrent[],
 };
@@ -41,15 +42,25 @@ export class App extends React.Component<Props, State> {
     this.props.getState();
   }
 
+  deleteTorrents = () => {
+    Object.entries(this.state.selected).forEach(([magnetLink, selected]) => {
+      if (selected) {
+        this.props.deleteTorrent(magnetLink);
+      }
+    });
+
+    this.setState({ selected: {} });
+  };
+
   toggleAddTorrent = () => this.setState({ showAddTorrent: !this.state.showAddTorrent });
 
   toggleSettings = () => this.setState({ showSettings: !this.state.showSettings });
 
-  toggleSelected = (i: number) => {
+  toggleSelected = (magnetLink: string) => {
     this.setState({
       selected: {
         ...this.state.selected,
-        [i]: !this.state.selected[i],
+        [magnetLink]: !this.state.selected[magnetLink],
       },
     });
   };
@@ -65,7 +76,7 @@ export class App extends React.Component<Props, State> {
           <IconButton style={{ color: greyOut ? grey['500'] : 'white' }}>
             <Pause/>
           </IconButton>
-          <IconButton style={{ color: greyOut ? grey['500'] : red['500'] }}>
+          <IconButton onClick={this.deleteTorrents} style={{ color: greyOut ? grey['500'] : red['500'] }}>
             <Delete/>
           </IconButton>
 
@@ -88,8 +99,8 @@ export class App extends React.Component<Props, State> {
         {torrents.map((torrent, i) => (
           <TorrentItem
             key={i}
-            onPress={() => this.toggleSelected(i)}
-            selected={!!selected[i]}
+            onPress={() => this.toggleSelected(torrent.magnetLink)}
+            selected={!!selected[torrent.magnetLink]}
             style={styles.section}
             torrent={torrent}
           />
@@ -123,6 +134,7 @@ export default connect(
     torrents: state.torrents,
   }),
   {
+    deleteTorrent,
     getState,
   },
 )(App);

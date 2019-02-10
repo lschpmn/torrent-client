@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { SET_DOWNLOAD_DESTINATION, SET_STATE } from './reducers';
+import { DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_STATE } from './reducers';
 
 export function addTorrent(magnetLink: string) {
   return dispatch => {
@@ -8,6 +8,13 @@ export function addTorrent(magnetLink: string) {
     });
 
     ipcRenderer.send('torrent-add', { magnetLink });
+  };
+}
+
+export function deleteTorrent(magnetLink: string) {
+  return {
+    type: DELETE_TORRENT,
+    payload: magnetLink,
   };
 }
 

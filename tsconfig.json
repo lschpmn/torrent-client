@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "inlineSourceMap": true,
-    "lib": ["es2015", "dom"],
+    "lib": ["es2015", "dom", "es2017"],
     "jsx": "react",
     "strictNullChecks": true
   }
