@@ -18,6 +18,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Torrent } from '../types';
 import AddTorrentModal from './components/AddTorrentModal';
+import DeleteModal from './components/DeleteModal';
 import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
 import { deleteTorrent, getState } from './lib/thunks';
@@ -32,6 +33,7 @@ type Props = {
 type State = {
   selected: { [i: string]: boolean },
   showAddTorrent: boolean,
+  showDelete: boolean,
   showSettings: boolean,
   sort: string,
   sortAscending: boolean,
@@ -41,6 +43,7 @@ export class App extends React.Component<Props, State> {
   state = {
     selected: {},
     showAddTorrent: false,
+    showDelete: false,
     showSettings: false,
     sort: 'added',
     sortAscending: false,
@@ -62,7 +65,7 @@ export class App extends React.Component<Props, State> {
       }
     });
 
-    this.setState({ selected: {} });
+    this.setState({ selected: {}, showDelete: false });
   };
 
   selectAll = () => {
@@ -77,6 +80,12 @@ export class App extends React.Component<Props, State> {
 
   toggleAddTorrent = () => this.setState({ showAddTorrent: !this.state.showAddTorrent });
 
+  toggleDelete = () => {
+    if (this.state.showDelete) return this.setState({ showDelete: false });
+    if (!this.props.torrents.filter(torrent => this.state.selected[torrent.magnetLink]).length) return;
+    this.setState({ showDelete: !this.state.showDelete });
+  };
+
   toggleSettings = () => this.setState({ showSettings: !this.state.showSettings });
 
   toggleSelected = (magnetLink: string) => {
@@ -90,7 +99,7 @@ export class App extends React.Component<Props, State> {
 
   render() {
     const { torrents } = this.props;
-    const { selected, sort, sortAscending } = this.state;
+    const { showDelete, selected, sort, sortAscending } = this.state;
     const allSelected = torrents.every(torrent => selected[torrent.magnetLink]);
     const greyOut = Object.keys(selected).every(select => !selected[select]);
 
@@ -100,7 +109,7 @@ export class App extends React.Component<Props, State> {
           <IconButton style={{ color: greyOut ? grey['500'] : 'white' }}>
             <Pause/>
           </IconButton>
-          <IconButton onClick={this.deleteTorrents} style={{ color: greyOut ? grey['500'] : red['500'] }}>
+          <IconButton onClick={this.toggleDelete} style={{ color: greyOut ? grey['500'] : red['500'] }}>
             <Delete/>
           </IconButton>
 
@@ -157,6 +166,12 @@ export class App extends React.Component<Props, State> {
         }
       </List>
       <AddTorrentModal onClose={this.toggleAddTorrent} open={this.state.showAddTorrent}/>
+      <DeleteModal
+        open={showDelete}
+        onClose={this.toggleDelete}
+        onDelete={this.deleteTorrents}
+        torrentsToDelete={showDelete ? torrents.filter(torrent => selected[torrent.magnetLink]) : undefined}
+      />
       <SettingsModal onClose={this.toggleSettings} open={this.state.showSettings}/>
     </div>;
   }
