@@ -209,4 +209,5 @@ export default connect(
     deleteTorrent,
     getState,
   },
+// @ts-ignore
 )(App);

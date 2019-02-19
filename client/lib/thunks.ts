@@ -1,13 +1,10 @@
 import { ipcRenderer } from 'electron';
 import { DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_STATE } from './reducers';
+import { getState as getStateFromSocket, saveDownloadDestination } from './services';
 
 export function addTorrent(magnetLink: string) {
   return dispatch => {
-    ipcRenderer.once('torrent-add', (event) => {
 
-    });
-
-    ipcRenderer.send('torrent-add', { magnetLink });
   };
 }
 
@@ -19,25 +16,26 @@ export function deleteTorrent(magnetLink: string) {
 }
 
 export function getState() {
-  return dispatch => {
-    ipcRenderer.once('state', (event, state) => {
-      dispatch({
-        payload: state,
-        type: SET_STATE,
-      });
-    });
+  return async dispatch => {
+    const state = await getStateFromSocket();
 
-    ipcRenderer.send('getState');
+    return dispatch({
+      payload: state,
+      type: SET_STATE,
+    });
   };
 }
 
 export function queryDestinationPath() {
   return dispatch => {
     ipcRenderer.once('explorer', (event, path) => {
-      if (path) dispatch({
-        payload: path,
-        type: SET_DOWNLOAD_DESTINATION,
-      });
+      if (path) {
+        saveDownloadDestination(path);
+        dispatch({
+          payload: path,
+          type: SET_DOWNLOAD_DESTINATION,
+        });
+      }
     });
 
     ipcRenderer.send('explorer');
