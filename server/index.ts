@@ -37,3 +37,5 @@ io.on('connection', socket => {
       .write()
   );
 });
+
+console.log('Server started on port 3000');
