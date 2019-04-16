@@ -7,7 +7,7 @@ const server = createServer();
 const io = socketIO(server, {
   origins: '*:*',
 });
-server.listen(3000);
+server.listen(3001);
 
 const adapter = new FileAsync('../db.json');
 let db;
@@ -38,4 +38,4 @@ io.on('connection', socket => {
   );
 });
 
-console.log('Server started on port 3000');
+console.log('Server started on port 3001');
