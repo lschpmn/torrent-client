@@ -4,6 +4,9 @@ function createWindow() {
   const win = new BrowserWindow({
     height: 720,
     width: 1280,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
 
   win.loadURL('http://localhost:5000');
