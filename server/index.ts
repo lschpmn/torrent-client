@@ -9,7 +9,7 @@ const io = socketIO(server, {
 });
 server.listen(3001);
 
-const adapter = new FileAsync('../db.json');
+const adapter = new FileAsync('./db.json');
 let db;
 lowdb(adapter)
   .then(_db => {
