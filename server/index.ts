@@ -5,6 +5,7 @@ import * as socketIO from 'socket.io';
 import * as actions from './actions';
 import { getState } from './actions';
 import { Torrent } from '../types';
+import { join } from 'path';
 
 const server = createServer();
 const io = socketIO(server, {
@@ -12,7 +13,7 @@ const io = socketIO(server, {
 });
 server.listen(3001);
 
-const adapter = new FileAsync('./db.json');
+const adapter = new FileAsync(join(__dirname, '..', 'db.json'));
 let db;
 lowdb(adapter)
   .then(_db => {
