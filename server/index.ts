@@ -4,6 +4,7 @@ import * as FileAsync from 'lowdb/adapters/FileAsync';
 import * as socketIO from 'socket.io';
 import * as actions from './actions';
 import { getState } from './actions';
+import { Torrent } from '../types';
 
 const server = createServer();
 const io = socketIO(server, {
@@ -31,6 +32,24 @@ io.on('connection', socket => {
   const dispatch = action => socket.emit('dispatch', action);
 
   dispatch(getState(db.value()));
+
+  socket.on('addTorrent', async magnetLink => {
+    const newTorrent: Torrent = {
+      added: Date.now(),
+      name: `Stephen Colbert ep: ${Math.round(Math.random() * 100)}`,
+      magnetLink,
+      size: Math.random() * Math.pow(1024, Math.ceil(Math.random() * 5)),
+    };
+
+    await db.get('torrents').push(newTorrent).write();
+    dispatch(actions.addTorrent(newTorrent));
+  });
+
+  socket.on('deleteTorrent', async magnetLink => {
+    await db.get('torrents').remove({ magnetLink }).write();
+
+    dispatch(actions.deleteTorrent(magnetLink));
+  });
 
   socket.on('setDownloadDestination', async (path: string) => {
     await db.set('downloadDestination', path).write();
