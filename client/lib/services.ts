@@ -7,13 +7,6 @@ export function bindDispatch(dispatch) {
   socket.on('dispatch', dispatch);
 }
 
-export function getState() {
-  return new Promise((resolve) => {
-    socket.once('getState-response', state => resolve(state));
-    socket.emit('getState');
-  });
-}
-
 export function getDownloadDestination() {
   ipcRenderer.once('explorer', (event, path) => {
     if (path) {

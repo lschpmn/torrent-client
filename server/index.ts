@@ -3,6 +3,7 @@ import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import * as socketIO from 'socket.io';
 import * as actions from './actions';
+import { getState } from './actions';
 
 const server = createServer();
 const io = socketIO(server, {
@@ -15,6 +16,7 @@ let db;
 lowdb(adapter)
   .then(_db => {
     db = _db;
+
     db.defaults({
       downloadDestination: null,
       torrents: [],
@@ -28,15 +30,10 @@ lowdb(adapter)
 io.on('connection', socket => {
   const dispatch = action => socket.emit('dispatch', action);
 
-  socket.on('getState', async () => {
-    const dbState = await db.getState();
+  dispatch(getState(db.value()));
 
-    socket.emit('getState-response', dbState);
-  });
-
-  socket.on('setDownloadDestination', (path: string) => {
-    db.set('downloadDestination', path)
-      .write();
+  socket.on('setDownloadDestination', async (path: string) => {
+    await db.set('downloadDestination', path).write().then(() => console.log('done'));
 
     dispatch(actions.getDownloadDestination(path));
   });

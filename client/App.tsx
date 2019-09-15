@@ -21,12 +21,11 @@ import AddTorrentModal from './components/AddTorrentModal';
 import DeleteModal from './components/DeleteModal';
 import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
-import { deleteTorrent, getState } from './lib/thunks';
+import { deleteTorrent } from './lib/thunks';
 import { ReducerState } from './lib/types';
 
 type Props = {
   deleteTorrent: typeof deleteTorrent,
-  getState: typeof getState,
   torrents: Torrent[],
 };
 
@@ -48,10 +47,6 @@ export class App extends React.Component<Props, State> {
     sort: 'added',
     sortAscending: false,
   };
-
-  componentDidMount() {
-    this.props.getState();
-  }
 
   changeSort = (sort: string) => {
     if (this.state.sort === sort) this.setState({ sortAscending: !this.state.sortAscending });
@@ -207,7 +202,6 @@ export default connect(
   }),
   {
     deleteTorrent,
-    getState,
   },
 // @ts-ignore
 )(App);
