@@ -12,6 +12,7 @@ const io = socketIO(server, {
   origins: '*:*',
 });
 server.listen(3001);
+console.log('Server started on port 3001');
 
 const adapter = new FileAsync(join(__dirname, '..', 'db.json'));
 let db;
@@ -20,8 +21,8 @@ lowdb(adapter)
     db = _db;
 
     db.defaults({
-      downloadDestination: null,
-      torrents: [],
+      downloadDestination: '',
+      torrents: [] as Torrent[],
     }).write();
   })
   .catch(err => {
@@ -34,29 +35,33 @@ io.on('connection', socket => {
 
   dispatch(getState(db.value()));
 
-  socket.on('addTorrent', async magnetLink => {
-    const newTorrent: Torrent = {
-      added: Date.now(),
-      name: `Stephen Colbert ep: ${Math.round(Math.random() * 100)}`,
-      magnetLink,
-      size: Math.random() * Math.pow(1024, Math.ceil(Math.random() * 5)),
-    };
+  socket.on('addTorrent', async magnetLink => addTorrent(dispatch, magnetLink));
 
-    await db.get('torrents').push(newTorrent).write();
-    dispatch(actions.addTorrent(newTorrent));
-  });
+  socket.on('deleteTorrent', async magnetLink => deleteTorrent(dispatch, magnetLink));
 
-  socket.on('deleteTorrent', async magnetLink => {
-    await db.get('torrents').remove({ magnetLink }).write();
-
-    dispatch(actions.deleteTorrent(magnetLink));
-  });
-
-  socket.on('setDownloadDestination', async (path: string) => {
-    await db.set('downloadDestination', path).write();
-
-    dispatch(actions.getDownloadDestination(path));
-  });
+  socket.on('setDownloadDestination', async path => setDownloadDestination(dispatch, path));
 });
 
-console.log('Server started on port 3001');
+async function addTorrent(dispatch, magnetLink: string) {
+  const newTorrent: Torrent = {
+    added: Date.now(),
+    name: `Stephen Colbert ep: ${Math.round(Math.random() * 100)}`,
+    magnetLink,
+    size: Math.random() * Math.pow(1024, Math.ceil(Math.random() * 5)),
+  };
+
+  await db.get('torrents').push(newTorrent).write();
+  dispatch(actions.addTorrent(newTorrent));
+}
+
+async function deleteTorrent(dispatch, magnetLink: string) {
+  await db.get('torrents').remove({ magnetLink }).write();
+
+  dispatch(actions.deleteTorrent(magnetLink));
+}
+
+async function setDownloadDestination(dispatch, path: string) {
+  await db.set('downloadDestination', path).write();
+
+  dispatch(actions.getDownloadDestination(path));
+}
