@@ -33,7 +33,7 @@ io.on('connection', socket => {
   dispatch(getState(db.value()));
 
   socket.on('setDownloadDestination', async (path: string) => {
-    await db.set('downloadDestination', path).write().then(() => console.log('done'));
+    await db.set('downloadDestination', path).write();
 
     dispatch(actions.getDownloadDestination(path));
   });
