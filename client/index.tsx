@@ -7,8 +7,10 @@ import App from './App';
 
 import './index.html';
 import reducers from './lib/reducers';
+import { bindDispatch } from './lib/services';
 
 const store = createStore(reducers, applyMiddleware(thunk));
+bindDispatch(store.dispatch);
 
 store.subscribe(() => console.log(store.getState()));
 

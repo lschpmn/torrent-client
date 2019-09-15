@@ -2,6 +2,7 @@ import { createServer } from 'http';
 import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import * as socketIO from 'socket.io';
+import * as actions from './actions';
 
 const server = createServer();
 const io = socketIO(server, {
@@ -25,17 +26,20 @@ lowdb(adapter)
   });
 
 io.on('connection', socket => {
+  const dispatch = action => socket.emit('dispatch', action);
+
   socket.on('getState', async () => {
     const dbState = await db.getState();
 
     socket.emit('getState-response', dbState);
   });
 
-  socket.on('setDownloadDestination', (path: string) =>
-    db
-      .set('downloadDestination', path)
-      .write()
-  );
+  socket.on('setDownloadDestination', (path: string) => {
+    db.set('downloadDestination', path)
+      .write();
+
+    dispatch(actions.getDownloadDestination(path));
+  });
 });
 
 console.log('Server started on port 3001');

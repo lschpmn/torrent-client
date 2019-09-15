@@ -5,17 +5,16 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { queryDestinationPath } from '../lib/thunks';
 import { ReducerState } from '../lib/types';
+import { getDownloadDestination } from '../lib/services';
 
 type Props = {
   downloadDestination?: string,
   onClose: () => void,
   open: boolean,
-  queryDestinationPath: typeof queryDestinationPath,
 };
 
-export const SettingsModal = ({ downloadDestination, onClose, open, queryDestinationPath }: Props) =>
+export const SettingsModal = ({ downloadDestination, onClose, open }: Props) =>
   <Dialog
     fullWidth
     onClose={onClose}
@@ -26,7 +25,7 @@ export const SettingsModal = ({ downloadDestination, onClose, open, queryDestina
       <div style={{ flex: 1 }}>
         Download Location
       </div>
-      <div style={{ flex: 1 }} onClick={queryDestinationPath}>
+      <div style={{ flex: 1 }} onClick={getDownloadDestination}>
         {downloadDestination || 'Click to set download destination' }
       </div>
     </DialogContent>
@@ -40,8 +39,5 @@ export const SettingsModal = ({ downloadDestination, onClose, open, queryDestina
 export default connect(
   (state: ReducerState) => ({
     downloadDestination: state.downloadDestination,
-  }),
-  {
-    queryDestinationPath,
-  },
+  })
 )(SettingsModal);
