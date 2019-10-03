@@ -6,6 +6,7 @@ import * as actions from './actions';
 import { getState } from './actions';
 import { Torrent } from '../types';
 import { join } from 'path';
+import * as torrentService from './torrent-service';
 
 const server = createServer();
 const io = socketIO(server, {
@@ -22,6 +23,7 @@ lowdb(adapter)
 
     db.defaults({
       downloadDestination: '',
+      pending: [] as Torrent[],
       torrents: [] as Torrent[],
     }).write();
   })
@@ -43,14 +45,9 @@ io.on('connection', socket => {
 });
 
 async function addTorrent(dispatch, magnetLink: string) {
-  const newTorrent: Torrent = {
-    added: Date.now(),
-    name: `Stephen Colbert ep: ${Math.round(Math.random() * 100)}`,
-    magnetLink,
-    size: Math.random() * Math.pow(1024, Math.ceil(Math.random() * 5)),
-  };
+  const newTorrent = await torrentService.addTorrent(magnetLink, db.downloadDestination.value());
 
-  await db.get('torrents').push(newTorrent).write();
+  await db.get('pending').push(newTorrent).write();
   dispatch(actions.addTorrent(newTorrent));
 }
 
