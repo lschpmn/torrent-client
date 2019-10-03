@@ -23,6 +23,7 @@ import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
 import { ReducerState } from './lib/types';
 import { deleteTorrent } from './lib/services';
+import PendingTorrentModal from './components/PendingTorrentModal';
 
 type Props = {
   torrents: Torrent[],
@@ -92,10 +93,20 @@ export class App extends React.Component<Props, State> {
   };
 
   render() {
-    const { torrents } = this.props;
+    const torrents = this.props.torrents.filter(torrent => !torrent.pending);
+    const pendingTorrents = this.props.torrents.filter(torrent => torrent.pending);
     const { showDelete, selected, sort, sortAscending } = this.state;
     const allSelected = torrents.every(torrent => selected[torrent.magnetLink]);
     const greyOut = Object.keys(selected).every(select => !selected[select]);
+
+    pendingTorrents.push({
+      added: Date.now() - (Math.random() * 60 * 60 * 1000),
+      pending: true,
+      size: 3,
+      files: [],
+      name: 'awesome new torrent',
+      magnetLink: 'skdfjklasdf',
+    });
 
     return <div>
       <AppBar position='static' style={styles.toolbar}>
@@ -167,6 +178,9 @@ export class App extends React.Component<Props, State> {
         torrentsToDelete={showDelete ? torrents.filter(torrent => selected[torrent.magnetLink]) : undefined}
       />
       <SettingsModal onClose={this.toggleSettings} open={this.state.showSettings}/>
+      {!!pendingTorrents.length &&
+        <PendingTorrentModal torrents={pendingTorrents} />
+      }
     </div>;
   }
 }
