@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Torrent } from '../../types';
-import Modal from '@material-ui/core/Modal';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 
 type Props = {
   torrents: Torrent[],
@@ -8,13 +9,15 @@ type Props = {
 
 export default class PendingTorrentModal extends React.Component<Props> {
   render() {
-    return <Modal open={true}>
-      <div style={styles.container}>
-        <div style={styles.subContainer}>Info</div>
+    return <Dialog fullWidth open={true}>
+      <DialogContent>
+        <div style={styles.container}>
+          <div style={styles.subContainer}>Info</div>
 
-        <div style={styles.subContainer}>Files</div>
-      </div>
-    </Modal>;
+          <div style={styles.subContainer}>Files</div>
+        </div>
+      </DialogContent>
+    </Dialog>;
   }
 }
 
