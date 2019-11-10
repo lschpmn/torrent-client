@@ -20,11 +20,10 @@ function createWindow() {
 
 app.on('ready', createWindow);
 
-ipcMain.on('explorer', (event, path) => {
-  dialog.showOpenDialog({
-    defaultPath: path,
+ipcMain.handle('explorer', async () => {
+  const response = await dialog.showOpenDialog(null, {
+    defaultPath: '',
     properties: ['openDirectory'],
-  }, async (paths) => {
-    event.sender.send('explorer', paths && paths[0]);
   });
+  return response.filePaths[0];
 });

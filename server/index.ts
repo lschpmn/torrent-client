@@ -3,7 +3,7 @@ import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import { join } from 'path';
 import * as socketIO from 'socket.io';
-import { ADD_TORRENT, DELETE_TORRENT } from '../constants';
+import { ADD_TORRENT, DELETE_TORRENT, SET_DOWNLOAD_DESTINATION } from '../constants';
 import { Torrent } from '../types';
 import * as actions from './action-creators';
 import TorrentEmitter from './TorrentEmitter';
@@ -45,26 +45,19 @@ io.on('connection', socket => {
     payload != null && console.log(payload);
 
     switch (type) {
+      // torrents
       case ADD_TORRENT:
         torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
         return;
       case DELETE_TORRENT:
-        deleteTorrent(payload);
+        await db.get('torrents').remove({ magnetLink: payload }).write();
+        torrentEmitter.deleteTorrent(payload);
+        return;
+
+      // settings
+      case SET_DOWNLOAD_DESTINATION:
+        await db.set('downloadDestination', payload).write();
         return;
     }
   });
-
-  socket.on('setDownloadDestination', async path => setDownloadDestination(dispatch, path));
 });
-
-async function deleteTorrent(magnetLink: string) {
-  await db.get('torrents').remove({ magnetLink }).write();
-
-  torrentEmitter.deleteTorrent(magnetLink);
-}
-
-async function setDownloadDestination(dispatch, path: string) {
-  await db.set('downloadDestination', path).write();
-
-  dispatch(actions.getDownloadDestination(path));
-}

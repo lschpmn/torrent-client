@@ -13,7 +13,7 @@ export default class TorrentEmitter {
   addTorrent(magnetLink: string, path: string) {
     if (this.client.get(magnetLink)) return;
 
-    this.client.add(magnetLink, { path }, torrent => {
+    this.client.add(magnetLink, { path }, (torrent: WebTorrent.Torrent) => {
       // bug workaround, https://github.com/webtorrent/webtorrent/issues/164#issuecomment-248395202
       torrent.deselect(0, torrent.pieces.length - 1, 0);
 
