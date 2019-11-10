@@ -1,4 +1,16 @@
 
+export type Action = {
+  payload: any,
+  type: string,
+};
+
+export type File = {
+  name: string,
+  size: number,
+};
+
+export type Listener = (action: Action) => void;
+
 export type Torrent = {
   // timestamp
   added: number,
@@ -6,10 +18,5 @@ export type Torrent = {
   name: string,
   magnetLink: string,
   pending: boolean,
-  size: number,
-};
-
-export type File = {
-  name: string,
   size: number,
 };
