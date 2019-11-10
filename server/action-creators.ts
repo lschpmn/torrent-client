@@ -1,10 +1,10 @@
-import { ADD_TORRENT, DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_STATE } from '../client/lib/reducers';
+import { DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_STATE, SET_TORRENT } from '../constants';
 import { Torrent } from '../types';
 
-export function addTorrent(torrent: Torrent) {
+export function setTorrent(torrent: Torrent) {
   return {
     payload: torrent,
-    type: ADD_TORRENT,
+    type: SET_TORRENT,
   };
 }
 

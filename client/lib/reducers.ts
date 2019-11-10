@@ -1,10 +1,6 @@
 import { combineReducers } from 'redux';
+import { DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_STATE, SET_TORRENT } from '../../constants';
 import { Torrent } from '../../types';
-
-export const ADD_TORRENT = 'ADD_TORRENT';
-export const DELETE_TORRENT = 'DELETE_TORRENT';
-export const SET_DOWNLOAD_DESTINATION = 'SET_DOWNLOAD_DESTINATION';
-export const SET_STATE = 'SET_STATE';
 
 function downloadDestination(state=null, { payload, type }) {
   switch (type) {
@@ -19,7 +15,7 @@ function downloadDestination(state=null, { payload, type }) {
 
 function torrents(state=[] as Torrent[], { payload, type }) {
   switch (type) {
-    case ADD_TORRENT:
+    case SET_TORRENT:
       return [...state, payload];
     case DELETE_TORRENT:
       return state.filter(torrent => torrent.magnetLink !== payload);

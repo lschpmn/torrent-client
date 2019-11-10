@@ -3,8 +3,8 @@ import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import * as socketIO from 'socket.io';
 import { ADD_TORRENT } from '../constants';
-import * as actions from './actions';
-import { getState } from './actions';
+import * as actions from './action-creators';
+import { getState } from './action-creators';
 import { Torrent } from '../types';
 import { join } from 'path';
 import * as torrentService from './torrent-service';
@@ -49,18 +49,16 @@ io.on('connection', socket => {
     }
   });
 
-  socket.on('addTorrent', async magnetLink => addTorrent(dispatch, magnetLink));
-
   socket.on('deleteTorrent', async magnetLink => deleteTorrent(dispatch, magnetLink));
 
   socket.on('setDownloadDestination', async path => setDownloadDestination(dispatch, path));
 });
 
 async function addTorrent(dispatch, magnetLink: string) {
-  const newTorrent = await torrentService.addTorrent(magnetLink, db.downloadDestination.value());
+  const newTorrent = await torrentService.addTorrent(magnetLink, 'asdf');
 
   await db.get('pending').push(newTorrent).write();
-  return actions.addTorrent(newTorrent);
+  return actions.setTorrent(newTorrent);
 }
 
 async function deleteTorrent(dispatch, magnetLink: string) {

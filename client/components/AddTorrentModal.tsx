@@ -6,9 +6,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import * as React from 'react';
-import { addTorrent } from '../lib/services';
+import { connect } from 'react-redux';
+import { addTorrent } from '../lib/action-creators';
 
 type Props = {
+  addTorrent: typeof addTorrent,
   onClose: () => void,
   open: boolean,
 };
@@ -17,7 +19,7 @@ type State = {
   link: string
 };
 
-export default class AddTorrentModal extends React.Component<Props, State> {
+export class AddTorrentModal extends React.Component<Props, State> {
   state = {
     link: '',
   };
@@ -26,7 +28,7 @@ export default class AddTorrentModal extends React.Component<Props, State> {
 
   onSubmit = () => {
     this.props.onClose();
-    addTorrent(this.state.link);
+    this.props.addTorrent(this.state.link);
     this.setState({ link: '' });
   };
 
@@ -63,3 +65,10 @@ export default class AddTorrentModal extends React.Component<Props, State> {
     </Dialog>;
   }
 }
+
+export default connect(
+  null,
+  {
+    addTorrent,
+  }
+)(AddTorrentModal);
