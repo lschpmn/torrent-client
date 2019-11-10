@@ -2,6 +2,7 @@ import { createServer } from 'http';
 import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import * as socketIO from 'socket.io';
+import { ADD_TORRENT } from '../constants';
 import * as actions from './actions';
 import { getState } from './actions';
 import { Torrent } from '../types';
@@ -37,6 +38,17 @@ io.on('connection', socket => {
 
   dispatch(getState(db.value()));
 
+  socket.on('dispatch', async ({ payload, type }) => {
+    console.log(type);
+    payload != null && console.log(payload);
+
+    switch (type) {
+      case ADD_TORRENT:
+        dispatch(await addTorrent(dispatch, payload));
+        return;
+    }
+  });
+
   socket.on('addTorrent', async magnetLink => addTorrent(dispatch, magnetLink));
 
   socket.on('deleteTorrent', async magnetLink => deleteTorrent(dispatch, magnetLink));
@@ -48,7 +60,7 @@ async function addTorrent(dispatch, magnetLink: string) {
   const newTorrent = await torrentService.addTorrent(magnetLink, db.downloadDestination.value());
 
   await db.get('pending').push(newTorrent).write();
-  dispatch(actions.addTorrent(newTorrent));
+  return actions.addTorrent(newTorrent);
 }
 
 async function deleteTorrent(dispatch, magnetLink: string) {
