@@ -99,14 +99,14 @@ export class App extends React.Component<Props, State> {
     const allSelected = torrents.every(torrent => selected[torrent.magnetLink]);
     const greyOut = Object.keys(selected).every(select => !selected[select]);
 
-    pendingTorrents.push({
+    /*pendingTorrents.push({
       added: Date.now() - (Math.random() * 60 * 60 * 1000),
       pending: true,
       size: 3,
       files: [],
       name: 'awesome new torrent',
       magnetLink: 'skdfjklasdf',
-    });
+    });*/
 
     return <div>
       <AppBar position='static' style={styles.toolbar}>
