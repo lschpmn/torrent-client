@@ -3,10 +3,9 @@ import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import { join } from 'path';
 import * as socketIO from 'socket.io';
-import { ADD_TORRENT } from '../constants';
+import { ADD_TORRENT, DELETE_TORRENT } from '../constants';
 import { Torrent } from '../types';
 import * as actions from './action-creators';
-import { getState } from './action-creators';
 import TorrentEmitter from './TorrentEmitter';
 
 const server = createServer();
@@ -39,7 +38,7 @@ io.on('connection', socket => {
   const dispatch = action => socket.emit('dispatch', action);
   torrentEmitter.setDispatch(dispatch);
 
-  dispatch(getState(db.value()));
+  dispatch(actions.getState(db.value()));
 
   socket.on('dispatch', async ({ payload, type }) => {
     console.log(type);
@@ -49,18 +48,19 @@ io.on('connection', socket => {
       case ADD_TORRENT:
         torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
         return;
+      case DELETE_TORRENT:
+        deleteTorrent(payload);
+        return;
     }
   });
-
-  socket.on('deleteTorrent', async magnetLink => deleteTorrent(dispatch, magnetLink));
 
   socket.on('setDownloadDestination', async path => setDownloadDestination(dispatch, path));
 });
 
-async function deleteTorrent(dispatch, magnetLink: string) {
+async function deleteTorrent(magnetLink: string) {
   await db.get('torrents').remove({ magnetLink }).write();
 
-  dispatch(actions.deleteTorrent(magnetLink));
+  torrentEmitter.deleteTorrent(magnetLink);
 }
 
 async function setDownloadDestination(dispatch, path: string) {

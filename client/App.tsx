@@ -22,10 +22,11 @@ import DeleteModal from './components/DeleteModal';
 import SettingsModal from './components/SettingsModal';
 import TorrentItem from './components/TorrentItem';
 import { ReducerState } from './lib/types';
-import { deleteTorrent } from './lib/services';
+import { deleteTorrent } from './lib/action-creators';
 import PendingTorrentModal from './components/PendingTorrentModal';
 
 type Props = {
+  deleteTorrent: typeof deleteTorrent,
   torrents: Torrent[],
 };
 
@@ -56,7 +57,7 @@ export class App extends React.Component<Props, State> {
   deleteTorrents = () => {
     Object.entries(this.state.selected).forEach(([magnetLink, selected]) => {
       if (selected) {
-        deleteTorrent(magnetLink);
+        this.props.deleteTorrent(magnetLink);
       }
     });
 
@@ -212,6 +213,9 @@ const styles = {
 export default connect(
   (state: ReducerState) => ({
     torrents: state.torrents,
-  })
+  }),
+  {
+    deleteTorrent,
+  }
 // @ts-ignore
 )(App);

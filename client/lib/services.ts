@@ -7,10 +7,6 @@ export function bindDispatch(dispatch) {
   socket.on('dispatch', dispatch);
 }
 
-export function deleteTorrent(magnetLink: string) {
-  socket.emit('deleteTorrent', magnetLink);
-}
-
 export function getDownloadDestination() {
   ipcRenderer.once('explorer', (event, path) => {
     if (path) {
