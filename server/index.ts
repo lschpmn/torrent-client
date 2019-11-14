@@ -1,3 +1,5 @@
+import { readAsync as read, writeAsync as write } from 'fs-jetpack';
+import * as getIncrementalPort from 'get-incremental-port';
 import { createServer } from 'http';
 import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
@@ -8,56 +10,74 @@ import { Torrent } from '../types';
 import * as actions from './action-creators';
 import TorrentEmitter from './TorrentEmitter';
 
-const server = createServer();
-const io = socketIO(server, {
-  origins: '*:*',
-});
-server.listen(3001);
-console.log('Server started on port 3001');
+const START_PORT = 3000;
+let retries = 10;
+export let port;
 
-const adapter = new FileAsync(join(__dirname, '..', 'db.json'));
-let db;
-lowdb(adapter)
-  .then(_db => {
-    db = _db;
+(function serverRestarter() {
+  startServer()
+    .catch(err => {
+      console.log(err);
+      retries--;
+      if (retries > 0) serverRestarter();
+    });
+})();
 
-    db.defaults({
-      downloadDestination: '',
-      pending: [] as Torrent[],
-      torrents: [] as Torrent[],
-    }).write();
-  })
-  .catch(err => {
-    console.log(err);
-    process.exit();
+async function startServer() {
+  port = await getIncrementalPort(START_PORT);
+  await writePortToIndex(port);
+
+  const server = createServer();
+  const io = socketIO(server, {
+    origins: '*:*',
   });
+  server.listen(port, () => console.log(`server running on port ${port}`));
 
-const torrentEmitter = new TorrentEmitter();
+  const adapter = new FileAsync(join(__dirname, '..', 'db.json'));
+  const db = await lowdb(adapter);
 
-io.on('connection', socket => {
-  const dispatch = action => socket.emit('dispatch', action);
-  torrentEmitter.setDispatch(dispatch);
+  await db.defaults({
+    downloadDestination: '',
+    pending: [] as Torrent[],
+    torrents: [] as Torrent[],
+  }).write();
 
-  dispatch(actions.getState(db.value()));
+  const torrentEmitter = new TorrentEmitter();
 
-  socket.on('dispatch', async ({ payload, type }) => {
-    console.log(type);
-    payload != null && console.log(payload);
+  io.on('connection', socket => {
+    const dispatch = action => socket.emit('dispatch', action);
+    torrentEmitter.setDispatch(dispatch);
 
-    switch (type) {
-      // torrents
-      case ADD_TORRENT:
-        torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
-        return;
-      case DELETE_TORRENT:
-        await db.get('torrents').remove({ magnetLink: payload }).write();
-        torrentEmitter.deleteTorrent(payload);
-        return;
+    dispatch(actions.getState(db.value()));
 
-      // settings
-      case SET_DOWNLOAD_DESTINATION:
-        await db.set('downloadDestination', payload).write();
-        return;
-    }
+    socket.on('dispatch', async ({ payload, type }) => {
+      console.log(type);
+      payload != null && console.log(payload);
+
+      switch (type) {
+        // torrents
+        case ADD_TORRENT:
+          torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
+          return;
+        case DELETE_TORRENT:
+          // @ts-ignore typescript went dumb for some reason
+          await db.get('torrents').remove({ magnetLink: payload }).write();
+          torrentEmitter.deleteTorrent(payload);
+          return;
+
+        // settings
+        case SET_DOWNLOAD_DESTINATION:
+          await db.set('downloadDestination', payload).write();
+          return;
+      }
+    });
   });
-});
+}
+
+async function writePortToIndex(port: number) {
+  const index = await read(join(__dirname, '../client/index.html'));
+  await write(
+    join(__dirname, '../public/index.html'),
+    index.replace('PORT__ = 0', `PORT__ = ${port}`)
+  );
+}

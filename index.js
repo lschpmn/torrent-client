@@ -1,4 +1,5 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+const { join } = require('path');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -9,7 +10,7 @@ function createWindow() {
     },
   });
 
-  win.loadURL('http://localhost:5000');
+  win.loadFile(join(__dirname, './public/index.html'));
 
   win.webContents.openDevTools();
 

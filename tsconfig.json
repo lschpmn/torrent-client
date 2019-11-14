@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "inlineSourceMap": true,
-    "lib": ["es2015", "dom", "es2017"],
     "jsx": "react",
-    "strictNullChecks": true
+    "moduleResolution": "node",
+    "target": "es6"
   }
 }
