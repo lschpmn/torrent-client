@@ -5,7 +5,7 @@ const { join } = require('path');
 module.exports = {
   context: join(__dirname, 'client'),
 
-  entry: './index.tsx',
+  entry: ['react-hot-loader/patch', './index.tsx'],
 
   output: {
     path: join(__dirname, 'public'),
@@ -18,11 +18,33 @@ module.exports = {
     rules: [
       { test: /.html$/, loader: 'file-loader', },
 
-      { test: /.tsx?$/, loader: 'ts-loader', },
+      {
+        test: /.tsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-typescript',
+              '@babel/preset-react',
+              '@babel/preset-env',
+            ],
+            plugins: [
+              '@babel/plugin-transform-runtime',
+              '@babel/plugin-proposal-class-properties',
+              '@babel/plugin-proposal-optional-chaining',
+              'react-hot-loader/babel',
+            ],
+          },
+        },
+      },
     ],
   },
 
   resolve: {
+    alias: {
+      'react-dom': '@hot-loader/react-dom',
+    },
     extensions: ['.ts', '.tsx', '.js', '.json'],
   },
 

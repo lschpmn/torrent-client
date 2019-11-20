@@ -14,6 +14,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import Pause from '@material-ui/icons/Pause';
 import Settings from '@material-ui/icons/Settings';
 import { isEqual } from 'lodash';
+import { hot } from 'react-hot-loader/root';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Torrent } from '../types';
@@ -210,7 +211,7 @@ const styles = {
   },
 };
 
-export default connect(
+const ConnectedApp = connect(
   (state: ReducerState) => ({
     torrents: state.torrents,
   }),
@@ -219,3 +220,5 @@ export default connect(
   }
 // @ts-ignore
 )(App);
+
+export default hot(ConnectedApp);
