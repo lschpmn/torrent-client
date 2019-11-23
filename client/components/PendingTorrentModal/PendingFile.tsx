@@ -1,15 +1,18 @@
-import { makeStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
+import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { colors, getSizeStr } from '../../lib/utils';
 import { File } from '../../../types';
+import { setFileSelected } from '../../lib/action-creators';
+import { colors, getSizeStr, useAction } from '../../lib/utils';
 
 type Props = {
   file: File,
+  magnetLink: string,
 };
 
-const PendingFile = ({ file }: Props) => {
+const PendingFile = ({ file, magnetLink }: Props) => {
   const classes = useStyles({});
+  const setSelected: typeof setFileSelected = useAction(setFileSelected);
 
   return  <div style={styles.file}>
     <Checkbox
@@ -18,7 +21,7 @@ const PendingFile = ({ file }: Props) => {
       }}
       checked={file.selected}
       color={'default'}
-      onChange={console.log}
+      onChange={e => setSelected(magnetLink, file.name, e.target.checked)}
     />
     <div>{getSizeStr(file.size)}&nbsp;&nbsp;</div>
     <div>{file.name}</div>

@@ -1,9 +1,10 @@
+import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { Torrent } from '../../../types';
-import { getSizeStr } from '../../lib/utils';
+import { colors, getSizeStr } from '../../lib/utils';
 import PendingFile from './PendingFile';
 
 type Props = {
@@ -39,9 +40,21 @@ const PendingTorrentModal = ({ torrents }: Props) => {
           <h2>Files</h2>
 
           <div style={styles.fileContainer}>
-            {torrent.files.map(file => <PendingFile key={file.name} file={file} />)}
+            {torrent.files.map(file =>
+              <PendingFile
+                key={file.name}
+                file={file}
+                magnetLink={torrent.magnetLink}
+              />,
+            )}
           </div>
-
+          <div style={{ flex: 1 }} />
+          <Button
+            style={styles.button}
+            variant="contained"
+          >
+            Add Torrent
+          </Button>
         </div>
       </div>
     </DialogContent>
@@ -57,14 +70,23 @@ const useStyles = makeStyles({
 });
 
 const styles = {
+  button: {
+    alignSelf: 'flex-end',
+    backgroundColor: colors.secondary,
+    color: 'white',
+    width: '15rem',
+  } as React.CSSProperties,
   container: {
     display: 'flex',
+    height: '100%',
   },
   fileContainer: {
     display: 'flex',
     flexDirection: 'column',
   } as React.CSSProperties,
   subContainer: {
+    display: 'flex',
     flex: 1,
-  },
+    flexDirection: 'column',
+  } as React.CSSProperties,
 };

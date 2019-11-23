@@ -1,4 +1,4 @@
-import { DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_STATE, SET_TORRENT } from '../constants';
+import { SET_DOWNLOAD_DESTINATION, SET_NEW_TORRENT, SET_STATE, SET_TORRENTS } from '../constants';
 import { Torrent } from '../types';
 
 export const getDownloadDestination = (path: string) => ( {
@@ -13,5 +13,10 @@ export const getState = (state) => ({
 
 export const setTorrent = (torrent: Torrent) => ({
   payload: torrent,
-  type: SET_TORRENT,
+  type: SET_NEW_TORRENT,
+});
+
+export const setTorrents = (torrents: Torrent[]) => ({
+  payload: torrents,
+  type: SET_TORRENTS,
 });

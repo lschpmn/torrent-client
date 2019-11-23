@@ -1,4 +1,10 @@
-import { ADD_TORRENT, DELETE_TORRENT, GET_DOWNLOAD_DESTINATION, SET_DOWNLOAD_DESTINATION } from '../../constants';
+import {
+  ADD_TORRENT,
+  DELETE_TORRENT,
+  GET_DOWNLOAD_DESTINATION,
+  SET_DOWNLOAD_DESTINATION,
+  SET_FILE_SELECTED,
+} from '../../constants';
 
 export const addTorrent = (magnetLink: string) => ({
   payload: magnetLink,
@@ -17,4 +23,13 @@ export const getDownloadDestination = () => ({
 export const setDownloadDestination = (path: string) => ({
   payload: path,
   type: SET_DOWNLOAD_DESTINATION,
+});
+
+export const setFileSelected = (magnetLink: string, fileName: string, selected: boolean,) => ({
+  payload: {
+    magnetLink,
+    fileName,
+    selected,
+  },
+  type: SET_FILE_SELECTED,
 });
