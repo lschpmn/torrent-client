@@ -54,4 +54,6 @@ module.exports = {
   },
 
   target: 'electron-renderer',
+
+  devtool: 'cheap-module-eval-source-map',
 };
