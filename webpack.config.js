@@ -16,8 +16,6 @@ module.exports = {
 
   module: {
     rules: [
-      { test: /.html$/, loader: 'file-loader', },
-
       {
         test: /.tsx?$/,
         exclude: /node_modules/,

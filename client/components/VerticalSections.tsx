@@ -15,9 +15,10 @@ type Props = {
 
 const VerticalSections = ({ child1, child2, id }: Props) => {
   const setDividerPositionAction = useAction(setDividerPosition);
-  const [mouseY, isTracking, setTrackingY] = useMouseYState();
+  const [isTracking, setIsTracking] = useState(false);
   const [elementBox, setElementBox] = useState(null as null | ClientRect);
   const [node, setNode] = useState(null);
+  const mouseY = useMouseY(isTracking, setIsTracking);
   const savedPercent = useSelector((state: ReducerState) => state.dividerPositions[id]) || 50;
 
   const percent = useMemo(() => {
@@ -27,8 +28,6 @@ const VerticalSections = ({ child1, child2, id }: Props) => {
       return Math.round(_percent * 1000) / 1000;
     } else return savedPercent;
   }, [mouseY, savedPercent]);
-
-  console.log(percent);
 
   useEffect(() => {
     if (node) {
@@ -47,16 +46,15 @@ const VerticalSections = ({ child1, child2, id }: Props) => {
   return <div style={styles.container} ref={setNode}>
     <div style={{ ...styles.section, flex: percent }}>{child1}</div>
     <Divider
-      onMouseDown={() => setTrackingY(true)}
+      onMouseDown={() => setIsTracking(true)}
       style={{ cursor: 'ns-resize', height: '0.5rem' }}
     />
     <div style={{ ...styles.section, flex: 100 - percent }}>{child2}</div>
   </div>;
 };
 
-const useMouseYState = (): [number, boolean, (x: boolean) => void] => {
+const useMouseY = (isTracking, setIsTracking): number => {
   const [mouseY, setMouseY] = useState(null);
-  const [isTracking, setIsTracking] = useState(false);
 
   useEffect(() => {
     if (isTracking) {
@@ -73,7 +71,7 @@ const useMouseYState = (): [number, boolean, (x: boolean) => void] => {
     }
   }, [isTracking]);
 
-  return [mouseY, isTracking, setIsTracking];
+  return mouseY;
 };
 
 const styles = {
