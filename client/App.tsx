@@ -1,7 +1,4 @@
 import AppBar from '@material-ui/core/AppBar';
-import green from '@material-ui/core/colors/green';
-import grey from '@material-ui/core/colors/grey';
-import red from '@material-ui/core/colors/red';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
 import Add from '@material-ui/icons/Add';
@@ -18,8 +15,10 @@ import DeleteModal from './components/DeleteModal';
 import PendingTorrentModal from './components/PendingTorrentModal';
 import SettingsModal from './components/SettingsModal';
 import TorrentsTable from './components/TorrentsTable';
+import VerticalSections from './components/VerticalSections';
 import { deleteTorrent } from './lib/action-creators';
 import { ReducerState } from './lib/types';
+import { colors } from './lib/utils';
 
 type Props = {
   deleteTorrent: typeof deleteTorrent,
@@ -87,41 +86,42 @@ export class App extends React.Component<Props, State> {
     const allSelected = torrents.every(torrent => selected[torrent.magnetLink]);
     const greyOut = Object.keys(selected).every(select => !selected[select]);
 
-    /*pendingTorrents.push({
-      added: Date.now() - (Math.random() * 60 * 60 * 1000),
-      pending: true,
-      size: 3,
-      files: [],
-      name: 'awesome new torrent',
-      magnetLink: 'skdfjklasdf',
-    });*/
+    return <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div>
+        <AppBar position='static' style={styles.toolbar}>
+          <Toolbar>
+            <IconButton style={{ color: greyOut ? colors.neutral : 'white' }}>
+              <Pause/>
+            </IconButton>
+            <IconButton onClick={this.toggleDelete} style={{ color: greyOut ? colors.neutral : colors.danger }}>
+              <Delete/>
+            </IconButton>
 
-    return <div>
-      <AppBar position='static' style={styles.toolbar}>
-        <Toolbar>
-          <IconButton style={{ color: greyOut ? grey['500'] : 'white' }}>
-            <Pause/>
-          </IconButton>
-          <IconButton onClick={this.toggleDelete} style={{ color: greyOut ? grey['500'] : red['500'] }}>
-            <Delete/>
-          </IconButton>
+            <div style={{ flexGrow: 1 }}/>
 
-          <div style={{ flexGrow: 1 }}/>
+            <IconButton style={{ color: 'white' }} onMouseDown={this.toggleAddTorrent}>
+              <Add/>
+            </IconButton>
+            <IconButton style={{ color: 'white' }} onClick={this.toggleSettings}>
+              <Settings/>
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+      </div>
 
-          <IconButton style={{ color: 'white' }} onMouseDown={this.toggleAddTorrent}>
-            <Add/>
-          </IconButton>
-          <IconButton style={{ color: 'white' }} onClick={this.toggleSettings}>
-            <Settings/>
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
-      <TorrentsTable
-        selected={this.state.selected}
-        allSelected={allSelected}
-        selectAll={this.selectAll}
-        toggleSelected={this.toggleSelected}
+      <VerticalSections
+        child1={
+          <TorrentsTable
+            selected={this.state.selected}
+            allSelected={allSelected}
+            selectAll={this.selectAll}
+            toggleSelected={this.toggleSelected}
+            torrents={torrents}
+          />
+        }
+        child2={
+          <div>Info Tabs go here</div>
+        }
       />
 
       <AddTorrentModal onClose={this.toggleAddTorrent} open={this.state.showAddTorrent}/>
@@ -159,7 +159,7 @@ const styles = {
     padding: '1rem 0',
   },
   toolbar: {
-    backgroundColor: green.A400,
+    backgroundColor: colors.primary,
   },
 };
 

@@ -2,12 +2,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import green from '@material-ui/core/colors/green';
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
-import { useCallback, useState } from 'react';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
-import { ReducerState } from '../../lib/types';
+import { useCallback, useState } from 'react';
+import { Torrent } from '../../../types';
 import TorrentItem from './TorrentItem';
 
 type Props = {
@@ -15,20 +14,18 @@ type Props = {
   selectAll: () => void,
   selected: { [i: string]: boolean },
   toggleSelected: (magnetLink: string) => void,
+  torrents: Torrent[],
 };
 
-const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected }: Props) => {
+const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torrents }: Props) => {
   const [sort, setSort] = useState('added');
   const [sortAscending, setSortAscending] = useState(false);
-  const torrents = useSelector((state: ReducerState) => state.torrents)
-    .filter(torrent => !torrent.pending);
 
   const changeSort = useCallback(newSort => {
     if (newSort === sort) setSortAscending(!sortAscending);
     else setSort(newSort);
   }, [sort, sortAscending]);
 
-  console.log(sort);
   return <div>
     <Paper style={styles.sectionTitle}>
       <div>
