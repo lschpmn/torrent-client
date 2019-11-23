@@ -1,5 +1,7 @@
 import blue from '@material-ui/core/colors/blue';
 import green from '@material-ui/core/colors/green';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
 export const colors = {
   primary: green.A400,
@@ -20,3 +22,10 @@ export function getSizeStr(size: number): string {
   currentSize = Math.round(currentSize * 100) / 100;
   return `${currentSize} ${sizes[sizeLabel]}`;
 }
+
+export const useAction = action => {
+  const dispatch = useDispatch();
+
+  return useCallback((...args) =>
+    dispatch(action(...args)), [dispatch]);
+};
