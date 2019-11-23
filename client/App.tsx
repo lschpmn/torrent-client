@@ -15,7 +15,6 @@ import DeleteModal from './components/DeleteModal';
 import PendingTorrentModal from './components/PendingTorrentModal';
 import SettingsModal from './components/SettingsModal';
 import TorrentsTable from './components/TorrentsTable';
-import VerticalSections from './components/VerticalSections';
 import { deleteTorrent } from './lib/action-creators';
 import { ReducerState } from './lib/types';
 import { colors } from './lib/utils';
@@ -109,19 +108,12 @@ export class App extends React.Component<Props, State> {
         </AppBar>
       </div>
 
-      <VerticalSections
-        child1={
-          <TorrentsTable
-            selected={this.state.selected}
-            allSelected={allSelected}
-            selectAll={this.selectAll}
-            toggleSelected={this.toggleSelected}
-            torrents={torrents}
-          />
-        }
-        child2={
-          <div>Info Tabs go here</div>
-        }
+      <TorrentsTable
+        selected={this.state.selected}
+        allSelected={allSelected}
+        selectAll={this.selectAll}
+        toggleSelected={this.toggleSelected}
+        torrents={torrents}
       />
 
       <AddTorrentModal onClose={this.toggleAddTorrent} open={this.state.showAddTorrent}/>

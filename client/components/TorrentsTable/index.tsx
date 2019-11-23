@@ -5,8 +5,9 @@ import Paper from '@material-ui/core/Paper';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Torrent } from '../../../types';
+import VerticalSections from '../VerticalSections';
 import TorrentItem from './TorrentItem';
 
 type Props = {
@@ -26,7 +27,17 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
     else setSort(newSort);
   }, [sort, sortAscending]);
 
-  return <div>
+  const sortedTorrents = useMemo(() => torrents.sort((a, b) =>
+    sort === 'name'
+      ? sortAscending
+        ? a[sort].localeCompare(b[sort])
+        : b[sort].localeCompare(a[sort])
+      : sortAscending
+        ? a[sort] - b[sort]
+        : b[sort] - a[sort]),
+    [sort, sortAscending, torrents]);
+
+  return <div style={styles.container}>
     <Paper style={styles.sectionTitle}>
       <div>
         <Checkbox
@@ -35,45 +46,60 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
           style={{ width: '2rem' }}
         />
       </div>
-      <div style={{ ...styles.section, cursor: undefined }}>
+      <div onMouseDown={() => changeSort('name')} style={styles.section}>
         Name
+        {sort === 'name' && <SortIcon ascending={sortAscending} />}
       </div>
       <div onMouseDown={() => changeSort('size')} style={styles.section}>
         Size
-        {sort === 'size' && (sortAscending
-          ? <ExpandLess style={styles.expandIcon} />
-          : <ExpandMore style={styles.expandIcon} />)
-        }
+        {sort === 'size' && <SortIcon ascending={sortAscending} />}
       </div>
       <div onMouseDown={() => changeSort('added')} style={styles.section}>
         Added
-        {sort === 'added' && (sortAscending
-          ? <ExpandLess style={styles.expandIcon} />
-          : <ExpandMore style={styles.expandIcon} />)
-        }
+        {sort === 'added' && <SortIcon ascending={sortAscending} />}
       </div>
     </Paper>
 
-    <List>
-      {torrents
-        .sort((a, b) => sortAscending ? a[sort] - b[sort] : b[sort] - a[sort])
-        .map((torrent, i) => (
-          <TorrentItem
-            key={i}
-            onPress={() => toggleSelected(torrent.magnetLink)}
-            selected={!!selected[torrent.magnetLink]}
-            style={styles.section}
-            torrent={torrent}
-          />
-        ))
+    <VerticalSections
+      child1={
+        <List>
+          {sortedTorrents
+            .map((torrent, i) => (
+              <TorrentItem
+                key={i}
+                onPress={() => toggleSelected(torrent.magnetLink)}
+                selected={!!selected[torrent.magnetLink]}
+                style={styles.section}
+                torrent={torrent}
+              />
+            ))
+          }
+        </List>
       }
-    </List>
+      child2={
+        <div>Info Tabs go here</div>
+      }
+      id="main-table"
+    />
   </div>;
 };
+
+type SortIconProps = {
+  ascending: boolean,
+};
+
+const SortIcon = ({ ascending }: SortIconProps) => ascending
+  ? <ExpandLess style={styles.expandIcon}/>
+  : <ExpandMore style={styles.expandIcon}/>;
 
 export default TorrentsTable;
 
 const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+  } as React.CSSProperties,
   dialog: {
     width: '50rem',
   },

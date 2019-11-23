@@ -10,16 +10,15 @@ import { useAction } from '../lib/utils';
 type Props = {
   child1: React.ReactNode,
   child2: React.ReactNode,
+  id: string,
 };
 
-const componentId = 'main-table';
-
-const VerticalSections = ({ child1, child2 }: Props) => {
+const VerticalSections = ({ child1, child2, id }: Props) => {
   const setDividerPositionAction = useAction(setDividerPosition);
   const [mouseY, isTracking, setTrackingY] = useMouseYState();
   const [elementBox, setElementBox] = useState(null as null | ClientRect);
   const [node, setNode] = useState(null);
-  const savedPercent = useSelector((state: ReducerState) => state.dividerPositions[componentId]) || 50;
+  const savedPercent = useSelector((state: ReducerState) => state.dividerPositions[id]) || 50;
 
   const percent = useMemo(() => {
     if (mouseY && elementBox && isTracking) {
@@ -27,7 +26,7 @@ const VerticalSections = ({ child1, child2 }: Props) => {
       _percent = Math.max(Math.min(_percent, 95), 5);
       return Math.round(_percent * 1000) / 1000;
     } else return savedPercent;
-  }, [mouseY, elementBox, savedPercent]);
+  }, [mouseY, savedPercent]);
 
   console.log(percent);
 
@@ -42,7 +41,7 @@ const VerticalSections = ({ child1, child2 }: Props) => {
   }, [node]);
 
   useEffect(() => {
-    if (!isTracking && percent && mouseY) setDividerPositionAction(componentId, percent);
+    if (!isTracking && percent && mouseY) setDividerPositionAction(id, percent);
   }, [isTracking]);
 
   return <div style={styles.container} ref={setNode}>
