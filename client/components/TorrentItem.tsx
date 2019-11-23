@@ -3,6 +3,7 @@ import ListItem from '@material-ui/core/ListItem/ListItem';
 import * as React from 'react';
 import { Torrent } from '../../types';
 import * as moment from 'moment';
+import { getSizeStr } from '../lib/utils';
 
 type Props = {
   onPress?: () => void,
@@ -43,17 +44,3 @@ const styles = {
     width: '100%',
   },
 };
-
-const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-function getSizeStr(size: number): string {
-  let currentSize = size;
-  let sizeLabel = 0;
-
-  while (currentSize > 1024) {
-    currentSize = currentSize / 1024;
-    sizeLabel++;
-  }
-
-  currentSize = Math.round(currentSize * 100) / 100;
-  return `${currentSize} ${sizes[sizeLabel]}`;
-}

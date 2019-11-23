@@ -8,6 +8,7 @@ import * as socketIO from 'socket.io';
 import { ADD_TORRENT, DELETE_TORRENT, SET_DOWNLOAD_DESTINATION } from '../constants';
 import { Torrent } from '../types';
 import * as actions from './action-creators';
+import { setTorrent } from './action-creators';
 import TorrentEmitter from './TorrentEmitter';
 
 const START_PORT = 3000;
@@ -38,7 +39,6 @@ async function startServer() {
 
   await db.defaults({
     downloadDestination: '',
-    pending: [] as Torrent[],
     torrents: [] as Torrent[],
   }).write();
 
@@ -57,7 +57,10 @@ async function startServer() {
       switch (type) {
         // torrents
         case ADD_TORRENT:
-          torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
+          const torrent = await torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
+          // @ts-ignore typescript went dumb for some reason
+          await db.get('torrents').unshift(torrent).write();
+          dispatch(setTorrent(torrent));
           return;
         case DELETE_TORRENT:
           // @ts-ignore typescript went dumb for some reason
