@@ -6,6 +6,7 @@ export type Action = {
 
 export type File = {
   name: string,
+  selected: boolean,
   size: number,
 };
 

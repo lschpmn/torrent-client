@@ -1,10 +1,10 @@
-import { makeStyles } from '@material-ui/core/styles';
-import * as React from 'react';
-import { Torrent } from '../../types';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import { colors, getSizeStr } from '../lib/utils';
-import Checkbox from '@material-ui/core/Checkbox';
+import { makeStyles } from '@material-ui/core/styles';
+import * as React from 'react';
+import { Torrent } from '../../../types';
+import { getSizeStr } from '../../lib/utils';
+import PendingFile from './PendingFile';
 
 type Props = {
   torrents: Torrent[],
@@ -39,17 +39,7 @@ const PendingTorrentModal = ({ torrents }: Props) => {
           <h2>Files</h2>
 
           <div style={styles.fileContainer}>
-            {torrent.files.map(file => <div key={file.name} style={styles.file}>
-              <Checkbox
-                classes={{
-                  checked: classes.checked,
-                }}
-                color={'default'}
-                value={true}
-              />
-              <div>{getSizeStr(file.size)}&nbsp;&nbsp;</div>
-              <div>{file.name}</div>
-            </div>)}
+            {torrent.files.map(file => <PendingFile key={file.name} file={file} />)}
           </div>
 
         </div>
@@ -61,9 +51,6 @@ const PendingTorrentModal = ({ torrents }: Props) => {
 export default PendingTorrentModal;
 
 const useStyles = makeStyles({
-  checked: {
-    color: colors.secondary,
-  },
   paper: {
     height: '80%',
   },
@@ -73,11 +60,6 @@ const styles = {
   container: {
     display: 'flex',
   },
-  file: {
-    alignItems: 'center',
-    display: 'flex',
-    margin: '1rem 0',
-  } as React.CSSProperties,
   fileContainer: {
     display: 'flex',
     flexDirection: 'column',
