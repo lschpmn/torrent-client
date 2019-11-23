@@ -1,6 +1,26 @@
 import { combineReducers } from 'redux';
-import { DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_NEW_TORRENT, SET_STATE, SET_TORRENTS } from '../../constants';
+import {
+  DELETE_TORRENT,
+  SET_DIVIDER_POSITION,
+  SET_DOWNLOAD_DESTINATION,
+  SET_NEW_TORRENT,
+  SET_STATE,
+  SET_TORRENTS,
+} from '../../constants';
 import { Torrent } from '../../types';
+
+function dividerPositions(state={}, { payload, type}) {
+  if (type === SET_DIVIDER_POSITION) {
+    return {
+      ...state,
+      ...payload,
+    };
+  } else if (type === SET_STATE) {
+    return payload.dividerPositions;
+  } else {
+    return state;
+  }
+}
 
 function downloadDestination(state=null, { payload, type }) {
   switch (type) {
@@ -29,6 +49,7 @@ function torrents(state=[] as Torrent[], { payload, type }) {
 }
 
 export default combineReducers({
+  dividerPositions,
   downloadDestination,
   torrents,
 })

@@ -5,7 +5,14 @@ import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import { join } from 'path';
 import * as socketIO from 'socket.io';
-import { ADD_TORRENT, DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_FILE_SELECTED, START_TORRENT } from '../constants';
+import {
+  ADD_TORRENT,
+  DELETE_TORRENT,
+  SET_DIVIDER_POSITION,
+  SET_DOWNLOAD_DESTINATION,
+  SET_FILE_SELECTED,
+  START_TORRENT,
+} from '../constants';
 import { Torrent } from '../types';
 import * as actions from './action-creators';
 import { setTorrent } from './action-creators';
@@ -38,6 +45,7 @@ async function startServer() {
   const db = await lowdb(adapter);
 
   await db.defaults({
+    dividerPositions: {},
     downloadDestination: '',
     torrents: [] as Torrent[],
   }).write();
@@ -55,15 +63,24 @@ async function startServer() {
       payload != null && console.log(payload);
 
       switch (type) {
+        // divider position
+        case SET_DIVIDER_POSITION:
+          await db
+            .get('dividerPositions')
+            // @ts-ignore
+            .assign(payload)
+            .write();
+          return;
+
         // torrents
         case ADD_TORRENT:
           const torrent = await torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
-          // @ts-ignore typescript went dumb for some reason
+          // @ts-ignore
           await db.get('torrents').unshift(torrent).write();
           dispatch(setTorrent(torrent));
           return;
         case DELETE_TORRENT:
-          // @ts-ignore typescript went dumb for some reason
+          // @ts-ignore
           await db.get('torrents').remove({ magnetLink: payload }).write();
           torrentEmitter.deleteTorrent(payload);
           dispatch(actions.setTorrents(db.get('torrents').value()));

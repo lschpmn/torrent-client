@@ -27,9 +27,9 @@ export function getSizeStr(size: number): string {
   return `${currentSize} ${sizes[sizeLabel]}`;
 }
 
-export const useAction = (action, deps?) => {
+export const useAction = <T extends Function>(action: T, deps?): T => {
   const dispatch = useDispatch();
 
   return useCallback((...args) =>
-    dispatch(action(...args)), deps ? [dispatch, ...deps] : [dispatch]);
+    dispatch(action(...args)), deps ? [dispatch, ...deps] : [dispatch]) as any;
 };

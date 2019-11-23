@@ -2,24 +2,32 @@ import Divider from '@material-ui/core/Divider';
 import throttle from 'lodash/throttle';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { setDividerPosition } from '../lib/action-creators';
+import { ReducerState } from '../lib/types';
+import { useAction } from '../lib/utils';
 
 type Props = {
   child1: React.ReactNode,
   child2: React.ReactNode,
 };
 
+const componentId = 'main-table';
+
 const VerticalSections = ({ child1, child2 }: Props) => {
-  const [mouseY, setTrackingY] = useMouseYState();
-  const [elementBox, setElementBox]: [ClientRect, any] = useState(null);
+  const setDividerPositionAction = useAction(setDividerPosition);
+  const [mouseY, isTracking, setTrackingY] = useMouseYState();
+  const [elementBox, setElementBox] = useState(null as null | ClientRect);
   const [node, setNode] = useState(null);
+  const savedPercent = useSelector((state: ReducerState) => state.dividerPositions[componentId]) || 50;
 
   const percent = useMemo(() => {
-    if (mouseY && elementBox) {
+    if (mouseY && elementBox && isTracking) {
       let _percent = ((mouseY - elementBox.top) / elementBox.height * 100);
-      _percent = Math.max(Math.min(_percent, 99), 1);
+      _percent = Math.max(Math.min(_percent, 95), 5);
       return Math.round(_percent * 1000) / 1000;
-    } else return 50;
-  }, [mouseY, elementBox]);
+    } else return savedPercent;
+  }, [mouseY, elementBox, savedPercent]);
 
   console.log(percent);
 
@@ -33,6 +41,10 @@ const VerticalSections = ({ child1, child2 }: Props) => {
     }
   }, [node]);
 
+  useEffect(() => {
+    if (!isTracking && percent && mouseY) setDividerPositionAction(componentId, percent);
+  }, [isTracking]);
+
   return <div style={styles.container} ref={setNode}>
     <div style={{ ...styles.section, flex: percent }}>{child1}</div>
     <Divider
@@ -43,9 +55,9 @@ const VerticalSections = ({ child1, child2 }: Props) => {
   </div>;
 };
 
-const useMouseYState = () => {
+const useMouseYState = (): [number, boolean, (x: boolean) => void] => {
   const [mouseY, setMouseY] = useState(null);
-  const [isTracking, setIsTracking] = useState(null);
+  const [isTracking, setIsTracking] = useState(false);
 
   useEffect(() => {
     if (isTracking) {
@@ -62,7 +74,7 @@ const useMouseYState = () => {
     }
   }, [isTracking]);
 
-  return [mouseY, setIsTracking];
+  return [mouseY, isTracking, setIsTracking];
 };
 
 const styles = {
