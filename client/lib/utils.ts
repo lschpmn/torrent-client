@@ -1,9 +1,11 @@
 import blue from '@material-ui/core/colors/blue';
 import green from '@material-ui/core/colors/green';
+import red from '@material-ui/core/colors/red';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 export const colors = {
+  danger: red['500'],
   primary: green.A400,
   secondary: blue['500'],
 };
@@ -23,9 +25,9 @@ export function getSizeStr(size: number): string {
   return `${currentSize} ${sizes[sizeLabel]}`;
 }
 
-export const useAction = action => {
+export const useAction = (action, deps?) => {
   const dispatch = useDispatch();
 
   return useCallback((...args) =>
-    dispatch(action(...args)), [dispatch]);
+    dispatch(action(...args)), deps ? [dispatch, ...deps] : [dispatch]);
 };

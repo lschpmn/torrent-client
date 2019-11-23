@@ -181,7 +181,7 @@ export class App extends React.Component<Props, State> {
       />
       <SettingsModal onClose={this.toggleSettings} open={this.state.showSettings}/>
       {!!pendingTorrents.length &&
-        <PendingTorrentModal torrents={pendingTorrents} />
+        <PendingTorrentModal torrent={pendingTorrents[0]} />
       }
     </div>;
   }

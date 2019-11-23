@@ -5,7 +5,7 @@ import * as lowdb from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import { join } from 'path';
 import * as socketIO from 'socket.io';
-import { ADD_TORRENT, DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_FILE_SELECTED } from '../constants';
+import { ADD_TORRENT, DELETE_TORRENT, SET_DOWNLOAD_DESTINATION, SET_FILE_SELECTED, START_TORRENT } from '../constants';
 import { Torrent } from '../types';
 import * as actions from './action-creators';
 import { setTorrent } from './action-creators';
@@ -76,6 +76,15 @@ async function startServer() {
             .get('files')
             .find({ name: payload.fileName })
             .set('selected', payload.selected)
+            .write();
+          dispatch(actions.setTorrents(db.get('torrents').value()));
+          return;
+        case START_TORRENT:
+          await db
+            .get('torrents')
+            // @ts-ignore
+            .find({ magnetLink: payload })
+            .set('pending', false)
             .write();
           dispatch(actions.setTorrents(db.get('torrents').value()));
           return;

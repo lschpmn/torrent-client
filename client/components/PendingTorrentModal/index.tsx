@@ -4,16 +4,18 @@ import DialogContent from '@material-ui/core/DialogContent';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { Torrent } from '../../../types';
-import { colors, getSizeStr } from '../../lib/utils';
+import { deleteTorrent, startTorrent } from '../../lib/action-creators';
+import { colors, getSizeStr, useAction } from '../../lib/utils';
 import PendingFile from './PendingFile';
 
 type Props = {
-  torrents: Torrent[],
+  torrent: Torrent,
 };
 
-const PendingTorrentModal = ({ torrents }: Props) => {
+const PendingTorrentModal = ({ torrent }: Props) => {
   const classes = useStyles({});
-  const torrent = torrents[0];
+  const deleteTorrentAction = useAction(() => deleteTorrent(torrent.magnetLink), [torrent.magnetLink]);
+  const startTorrentAction = useAction(() => startTorrent(torrent.magnetLink), [torrent.magnetLink]);
   console.log(torrent);
 
   return <Dialog
@@ -49,12 +51,27 @@ const PendingTorrentModal = ({ torrents }: Props) => {
             )}
           </div>
           <div style={{ flex: 1 }} />
-          <Button
-            style={styles.button}
-            variant="contained"
-          >
-            Add Torrent
-          </Button>
+
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}>
+            <Button
+              onClick={deleteTorrentAction}
+              style={styles.cancelButton}
+              variant="contained"
+            >
+              Cancel
+            </Button>
+            <div style={{ width: '2rem' }} />
+            <Button
+              onClick={startTorrentAction}
+              style={styles.addButton}
+              variant="contained"
+            >
+              Add Torrent
+            </Button>
+          </div>
         </div>
       </div>
     </DialogContent>
@@ -70,11 +87,15 @@ const useStyles = makeStyles({
 });
 
 const styles = {
-  button: {
-    alignSelf: 'flex-end',
+  addButton: {
     backgroundColor: colors.secondary,
     color: 'white',
-    width: '15rem',
+    width: '10rem',
+  } as React.CSSProperties,
+  cancelButton: {
+    backgroundColor: colors.danger,
+    color: 'white',
+    width: '10rem',
   } as React.CSSProperties,
   container: {
     display: 'flex',

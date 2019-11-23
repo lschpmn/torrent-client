@@ -4,6 +4,7 @@ import {
   GET_DOWNLOAD_DESTINATION,
   SET_DOWNLOAD_DESTINATION,
   SET_FILE_SELECTED,
+  START_TORRENT,
 } from '../../constants';
 
 export const addTorrent = (magnetLink: string) => ({
@@ -32,4 +33,9 @@ export const setFileSelected = (magnetLink: string, fileName: string, selected: 
     selected,
   },
   type: SET_FILE_SELECTED,
+});
+
+export const startTorrent = (magnetLink: string) => ({
+  payload: magnetLink,
+  type: START_TORRENT,
 });
