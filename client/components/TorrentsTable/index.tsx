@@ -2,12 +2,15 @@ import Checkbox from '@material-ui/core/Checkbox';
 import green from '@material-ui/core/colors/green';
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { Torrent } from '../../../types';
 import VerticalSections from '../shared/VerticalSections';
+import FilesTable from './FilesTable';
 import TorrentItem from './TorrentItem';
 
 type Props = {
@@ -19,8 +22,13 @@ type Props = {
 };
 
 const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torrents }: Props) => {
+  const [tab, setTab] = useState(0);
   const [sort, setSort] = useState('added');
   const [sortAscending, setSortAscending] = useState(false);
+  const firstSelected = Object
+    .entries(selected)
+    .map(([magnetLink, _selected]) => _selected ? magnetLink : null)
+    .filter(Boolean)[0];
 
   const changeSort = useCallback(newSort => {
     if (newSort === sort) setSortAscending(!sortAscending);
@@ -77,7 +85,26 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
         </List>
       }
       child2={
-        <div>Info Tabs go here</div>
+        <div>
+          <Tabs
+            onChange={(e, val) => setTab(val)}
+            value={tab}
+          >
+            <Tab label="Files" />
+            <Tab label="Graph" />
+          </Tabs>
+          {tab === 0 && <div>
+            {firstSelected &&
+              <FilesTable
+                files={torrents.find(torrent => torrent.magnetLink === firstSelected).files}
+              />}
+
+            {!firstSelected &&
+              <div>Select Torrent</div>
+            }
+          </div>}
+          {tab === 1 && <div>Fancy Graph</div>}
+        </div>
       }
       id="main-table"
     />

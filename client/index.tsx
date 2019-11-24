@@ -1,3 +1,6 @@
+import blue from '@material-ui/core/colors/blue';
+import green from '@material-ui/core/colors/green';
+import red from '@material-ui/core/colors/red';
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
@@ -7,9 +10,21 @@ import electronMiddleware from './lib/electronMiddleware';
 import loggerMiddleware from './lib/loggerMiddleware';
 import reducers from './lib/reducers';
 import socketMiddleware from './lib/socketMiddleware';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const store = createStore(reducers, applyMiddleware(loggerMiddleware, socketMiddleware, electronMiddleware));
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+    secondary: blue,
+    error: red,
+  },
+});
 
-render(<Provider store={store}>
-  <App />
-</Provider>, document.getElementById('react'));
+render((
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <App/>
+    </ThemeProvider>
+  </Provider>
+), document.getElementById('react'));
