@@ -7,7 +7,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { Torrent } from '../../../types';
-import VerticalSections from '../VerticalSections';
+import VerticalSections from '../shared/VerticalSections';
 import TorrentItem from './TorrentItem';
 
 type Props = {

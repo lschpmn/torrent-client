@@ -3,9 +3,9 @@ import throttle from 'lodash/throttle';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { setDividerPosition } from '../lib/action-creators';
-import { ReducerState } from '../lib/types';
-import { useAction } from '../lib/utils';
+import { setDividerPosition } from '../../lib/action-creators';
+import { ReducerState } from '../../lib/types';
+import { useAction } from '../../lib/utils';
 
 type Props = {
   child1: React.ReactNode,
@@ -46,8 +46,9 @@ const VerticalSections = ({ child1, child2, id }: Props) => {
   return <div style={styles.container} ref={setNode}>
     <div style={{ ...styles.section, flex: percent }}>{child1}</div>
     <Divider
+      onDoubleClick={() => setDividerPositionAction(id, 50)}
       onMouseDown={() => setIsTracking(true)}
-      style={{ cursor: 'ns-resize', height: '0.5rem' }}
+      style={{ cursor: 'ns-resize', height: '0.25rem' }}
     />
     <div style={{ ...styles.section, flex: 100 - percent }}>{child2}</div>
   </div>;
