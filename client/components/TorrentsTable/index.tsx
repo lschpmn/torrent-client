@@ -100,7 +100,7 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
               />}
 
             {!firstSelected &&
-              <div>Select Torrent</div>
+              <h2 style={{ margin: '3rem auto', textAlign: 'center', }}>Select Torrent</h2>
             }
           </div>}
           {tab === 1 && <div>Fancy Graph</div>}
@@ -142,9 +142,9 @@ const styles = {
   sectionTitle: {
     borderRadius: 0,
     display: 'flex',
-    flexDirection: 'row' as 'row',
+    flexDirection: 'row',
     padding: '1rem 0',
-  },
+  } as React.CSSProperties,
   toolbar: {
     backgroundColor: green.A400,
   },
