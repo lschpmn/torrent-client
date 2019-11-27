@@ -1,22 +1,36 @@
 import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TC from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TR from '@material-ui/core/TableRow';
 import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import { Torrent } from '../../../types';
-import { deleteTorrent, startTorrent } from '../../lib/action-creators';
+import { deleteTorrent, setFileSelected, startTorrent } from '../../lib/action-creators';
 import { colors, getSizeStr, useAction } from '../../lib/utils';
-import PendingFile from './PendingFile';
 
 type Props = {
   torrent: Torrent,
 };
 
 const PendingTorrentModal = ({ torrent }: Props) => {
+  const setFilesSelectedAction: typeof setFileSelected = useAction(setFileSelected);
   const classes = useStyles({});
   const deleteTorrentAction = useAction(() => deleteTorrent(torrent.magnetLink), [torrent.magnetLink]);
   const startTorrentAction = useAction(() => startTorrent(torrent.magnetLink), [torrent.magnetLink]);
-  console.log(torrent);
+
+  const isAllFilesSelected = useMemo(() => torrent.files.every(file => file.selected), [torrent.files]);
+  const flipAllFilesSelected = useCallback(() => {
+    torrent
+      .files
+      .filter(file => isAllFilesSelected ? file.selected : !file.selected)
+      .forEach(file => setFilesSelectedAction(torrent.magnetLink, file.name, !isAllFilesSelected));
+  }, [isAllFilesSelected, torrent.files]);
 
   return <Dialog
     classes={{
@@ -28,50 +42,67 @@ const PendingTorrentModal = ({ torrent }: Props) => {
   >
     <DialogContent>
       <div style={styles.container}>
-        <div style={styles.subContainer}>
-          <h2>Info</h2>
+        <div style={{ display: 'flex' }}>
+          <div style={{ flex: 1 }}>
+            <h4>Name</h4>
+            <div>{torrent.name}</div>
+          </div>
 
-          <h4>Name</h4>
-          <div>{torrent.name}</div>
-
-          <h4>Size</h4>
-          <div>{getSizeStr(torrent.size)}</div>
+          <div style={{ flex: 1 }}>
+            <h4>Size</h4>
+            <div>{getSizeStr(torrent.size)}</div>
+          </div>
         </div>
 
-        <div style={styles.subContainer}>
-          <h2>Files</h2>
+        <h2 style={{ marginTop: '3rem' }}>Files</h2>
 
-          <div style={styles.fileContainer}>
+        <Table size="medium">
+          <TableHead>
+            <TR>
+              <TC padding="checkbox">
+                <Checkbox
+                  checked={isAllFilesSelected}
+                  onChange={flipAllFilesSelected}
+                />
+              </TC>
+              <TC>Size</TC>
+              <TC>Name</TC>
+            </TR>
+          </TableHead>
+          <TableBody>
             {torrent.files.map(file =>
-              <PendingFile
-                key={file.name}
-                file={file}
-                magnetLink={torrent.magnetLink}
-              />,
+              <TR key={file.name}>
+                <TC padding="checkbox">
+                  <Checkbox
+                    checked={file.selected}
+                    onChange={e => setFilesSelectedAction(torrent.magnetLink, file.name, e.target.checked)}
+                  />
+                </TC>
+                <TC>{getSizeStr(file.size)}</TC>
+                <TC>{file.name}</TC>
+              </TR>
             )}
-          </div>
-          <div style={{ flex: 1 }} />
+          </TableBody>
+        </Table>
 
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-          }}>
-            <Button
-              onClick={deleteTorrentAction}
-              style={styles.cancelButton}
-              variant="contained"
-            >
-              Cancel
-            </Button>
-            <div style={{ width: '2rem' }} />
-            <Button
-              onClick={startTorrentAction}
-              style={styles.addButton}
-              variant="contained"
-            >
-              Add Torrent
-            </Button>
-          </div>
+        <div style={{ flex: 1 }} />
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            onClick={deleteTorrentAction}
+            style={styles.cancelButton}
+            variant="contained"
+          >
+            Cancel
+          </Button>
+          <div style={{ width: '2rem' }} />
+          <Button
+            onClick={startTorrentAction}
+            style={styles.addButton}
+            variant="contained"
+          >
+            Add Torrent
+          </Button>
         </div>
       </div>
     </DialogContent>
@@ -100,14 +131,6 @@ const styles = {
   container: {
     display: 'flex',
     height: '100%',
-  },
-  fileContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-  } as React.CSSProperties,
-  subContainer: {
-    display: 'flex',
-    flex: 1,
     flexDirection: 'column',
   } as React.CSSProperties,
 };
