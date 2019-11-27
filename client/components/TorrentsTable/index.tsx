@@ -30,6 +30,8 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
     .map(([magnetLink, _selected]) => _selected ? magnetLink : null)
     .filter(Boolean)[0];
 
+  const selectedTorrent = torrents.find(torrent => torrent.magnetLink === firstSelected);
+
   const changeSort = useCallback(newSort => {
     if (newSort === sort) setSortAscending(!sortAscending);
     else setSort(newSort);
@@ -96,7 +98,8 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
           {tab === 0 && <div>
             {firstSelected &&
               <FilesTable
-                files={torrents.find(torrent => torrent.magnetLink === firstSelected).files}
+                files={selectedTorrent?.files}
+                magnetLink={selectedTorrent?.magnetLink}
               />}
 
             {!firstSelected &&
