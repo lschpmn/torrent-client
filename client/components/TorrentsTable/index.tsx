@@ -25,12 +25,6 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
   const [tab, setTab] = useState(0);
   const [sort, setSort] = useState('added');
   const [sortAscending, setSortAscending] = useState(false);
-  const firstSelected = Object
-    .entries(selected)
-    .map(([magnetLink, _selected]) => _selected ? magnetLink : null)
-    .filter(Boolean)[0];
-
-  const selectedTorrent = torrents.find(torrent => torrent.magnetLink === firstSelected);
 
   const changeSort = useCallback(newSort => {
     if (newSort === sort) setSortAscending(!sortAscending);
@@ -46,6 +40,8 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
         ? a[sort] - b[sort]
         : b[sort] - a[sort]),
     [sort, sortAscending, torrents]);
+
+  const selectedTorrent = sortedTorrents.find(torrent => selected[torrent.magnetLink]);
 
   return <div style={styles.container}>
     <Paper style={styles.sectionTitle}>
@@ -96,13 +92,13 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
             <Tab label="Graph" />
           </Tabs>
           {tab === 0 && <div>
-            {firstSelected &&
+            {selectedTorrent &&
               <FilesTable
                 files={selectedTorrent?.files}
                 magnetLink={selectedTorrent?.magnetLink}
               />}
 
-            {!firstSelected &&
+            {!selectedTorrent &&
               <h2 style={{ margin: '3rem auto', textAlign: 'center', }}>Select Torrent</h2>
             }
           </div>}
