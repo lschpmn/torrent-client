@@ -5,7 +5,7 @@ import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
 import Pause from '@material-ui/icons/Pause';
 import Settings from '@material-ui/icons/Settings';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import * as React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';

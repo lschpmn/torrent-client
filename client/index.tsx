@@ -16,7 +16,9 @@ const store = createStore(reducers, applyMiddleware(loggerMiddleware, socketMidd
 const theme = createMuiTheme({
   palette: {
     primary: green,
-    secondary: blue,
+    secondary: {
+      main: blue['500'],
+    },
     error: red,
   },
 });

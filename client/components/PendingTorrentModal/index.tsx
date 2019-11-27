@@ -12,7 +12,7 @@ import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { Torrent } from '../../../types';
 import { deleteTorrent, setFileSelected, startTorrent } from '../../lib/action-creators';
-import { colors, getSizeStr, useAction } from '../../lib/utils';
+import { getSizeStr, useAction } from '../../lib/utils';
 
 type Props = {
   torrent: Torrent,
@@ -87,18 +87,22 @@ const PendingTorrentModal = ({ torrent }: Props) => {
 
         <div style={{ flex: 1 }} />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={styles.buttonContainer}>
           <Button
+            classes={{
+              root: classes.buttonContain,
+            }}
             onClick={deleteTorrentAction}
-            style={styles.cancelButton}
+            style={styles.button}
             variant="contained"
           >
             Cancel
           </Button>
           <div style={{ width: '2rem' }} />
           <Button
+            color="secondary"
             onClick={startTorrentAction}
-            style={styles.addButton}
+            style={styles.button}
             variant="contained"
           >
             Add Torrent
@@ -111,22 +115,27 @@ const PendingTorrentModal = ({ torrent }: Props) => {
 
 export default PendingTorrentModal;
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   paper: {
     height: '80%',
   },
-});
+  buttonContain: {
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.error.dark,
+    },
+  },
+}));
 
 const styles = {
-  addButton: {
-    backgroundColor: colors.secondary,
-    color: 'white',
+  button: {
     width: '10rem',
   } as React.CSSProperties,
-  cancelButton: {
-    backgroundColor: colors.danger,
-    color: 'white',
-    width: '10rem',
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    margin: '2rem 0',
   } as React.CSSProperties,
   container: {
     display: 'flex',
