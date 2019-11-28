@@ -8,6 +8,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { Torrent } from '../../../types';
+import HorizontalSections from '../shared/HorizontalSections';
 import VerticalSections from '../shared/VerticalSections';
 import FilesTable from './FilesTable';
 import TorrentItem from './TorrentItem';
@@ -51,18 +52,20 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
           style={{ width: '2rem' }}
         />
       </div>
-      <div onMouseDown={() => changeSort('name')} style={styles.section}>
-        Name
-        {sort === 'name' && <SortIcon ascending={sortAscending} />}
-      </div>
-      <div onMouseDown={() => changeSort('size')} style={styles.section}>
-        Size
-        {sort === 'size' && <SortIcon ascending={sortAscending} />}
-      </div>
-      <div onMouseDown={() => changeSort('added')} style={styles.section}>
-        Added
-        {sort === 'added' && <SortIcon ascending={sortAscending} />}
-      </div>
+      <HorizontalSections id="torrents-table">
+        <div onMouseDown={() => changeSort('name')} style={styles.section}>
+          Name
+          {sort === 'name' && <SortIcon ascending={sortAscending} />}
+        </div>
+        <div onMouseDown={() => changeSort('size')} style={styles.section}>
+          Size
+          {sort === 'size' && <SortIcon ascending={sortAscending} />}
+        </div>
+        <div onMouseDown={() => changeSort('added')} style={styles.section}>
+          Added
+          {sort === 'added' && <SortIcon ascending={sortAscending} />}
+        </div>
+      </HorizontalSections>
     </Paper>
 
     <VerticalSections
