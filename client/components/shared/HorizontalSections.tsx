@@ -36,7 +36,6 @@ const HorizontalSections = ({ children, id, listenOnly }: Props) => {
     const total = percents.reduce((tot, val) => tot + val, 0);
     console.log(`total: ${total}`);
   }, [percents]);
-  useEffect(() => console.log(elementBox), [elementBox]);
 
   useEffect(() => {
     if (isTracking && mouseX) {

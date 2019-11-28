@@ -1,11 +1,13 @@
 import Divider from '@material-ui/core/Divider';
 import throttle from 'lodash/throttle';
+import { useCallback } from 'react';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { setDividerPosition } from '../../lib/action-creators';
+import { setDividerPosition, setDividerPositionServer } from '../../lib/action-creators';
 import { ReducerState } from '../../lib/types';
 import { useAction } from '../../lib/utils';
+import debounce from 'lodash/debounce';
 
 type Props = {
   child1: React.ReactNode,
@@ -15,6 +17,7 @@ type Props = {
 
 const VerticalSections = ({ child1, child2, id }: Props) => {
   const setDividerPositionAction = useAction(setDividerPosition);
+  const setDividerPositionServerAction = useCallback(debounce(useAction(setDividerPositionServer), 100), []);
   const [isTracking, setIsTracking] = useState(false);
   const [node, setNode] = useState(null);
   const elementBox = useElementBox(node);
@@ -30,7 +33,10 @@ const VerticalSections = ({ child1, child2, id }: Props) => {
   }, [mouseY, savedPercent]);
 
   useEffect(() => {
-    if (!isTracking && percent && mouseY) setDividerPositionAction(id, percent as any);
+    if (!isTracking && percent && mouseY) {
+      setDividerPositionAction(id, percent as any);
+      setDividerPositionServerAction(id, percent as any);
+    }
   }, [isTracking]);
 
   return <div style={styles.container} ref={setNode}>
