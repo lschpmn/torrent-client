@@ -99,7 +99,7 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
               />}
 
             {!selectedTorrent &&
-              <h2 style={{ margin: '3rem auto', textAlign: 'center', }}>Select Torrent</h2>
+              <h2 style={{ margin: '1rem auto', textAlign: 'center', }}>Select Torrent</h2>
             }
           </div>}
           {tab === 1 && <div>Fancy Graph</div>}

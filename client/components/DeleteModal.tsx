@@ -6,28 +6,35 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import T from '@material-ui/core/Typography';
 import * as React from 'react';
+import { useCallback } from 'react';
 import { Torrent } from '../../types';
+import { deleteTorrent } from '../lib/action-creators';
+import { useAction } from '../lib/utils';
 
 type Props = {
   onClose: () => void,
-  onDelete: () => void,
   open: boolean,
-  torrentsToDelete?: Torrent[],
+  torrents?: Torrent[],
 };
 
-const DeleteModal = ({ onClose, onDelete, open, torrentsToDelete }: Props) => {
-  if (!torrentsToDelete) return null;
+const DeleteModal = ({ onClose, open, torrents }: Props) => {
+  const deleteTorrentAction = useAction(deleteTorrent);
 
+  const onDelete = useCallback(() => {
+    torrents.forEach(torrent => deleteTorrentAction(torrent.magnetLink));
+  }, [torrents]);
+
+  if (!torrents) return null;
   return <Dialog
     fullWidth
     onClose={onClose}
     open={open}
   >
     <DialogTitle>
-      <T color="error" variant="inherit">Delete</T>
+      Delete
     </DialogTitle>
     <DialogContent>
-      {torrentsToDelete.map(torrent =>
+      {torrents.map(torrent =>
         <DialogContentText key={torrent.magnetLink} style={styles.item}>
           {torrent.name}
         </DialogContentText>

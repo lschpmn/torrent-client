@@ -15,7 +15,9 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 const store = createStore(reducers, applyMiddleware(loggerMiddleware, socketMiddleware, electronMiddleware));
 const theme = createMuiTheme({
   palette: {
-    primary: green,
+    primary: {
+      main: green.A400,
+    },
     secondary: {
       main: blue['500'],
     },

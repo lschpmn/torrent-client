@@ -1,16 +1,5 @@
-import blue from '@material-ui/core/colors/blue';
-import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
-import grey from '@material-ui/core/colors/grey';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-
-export const colors = {
-  danger: red['500'],
-  neutral: grey['500'],
-  primary: green.A400,
-  secondary: blue['500'],
-};
 
 export const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
 

@@ -4,19 +4,21 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getDownloadDestination } from '../lib/action-creators';
 import { ReducerState } from '../lib/types';
+import { useAction } from '../lib/utils';
 
 type Props = {
-  downloadDestination?: string,
-  getDownloadDestination: typeof getDownloadDestination,
   onClose: () => void,
   open: boolean,
 };
 
-export const SettingsModal = ({ downloadDestination, getDownloadDestination: getDownloadDestinationAction, onClose, open }: Props) =>
-  <Dialog
+export const SettingsModal = ({ onClose, open }: Props) => {
+  const getDownloadDestinationAction = useAction(getDownloadDestination);
+  const downloadDestination = useSelector((state: ReducerState) => state.downloadDestination);
+
+  return <Dialog
     fullWidth
     onClose={onClose}
     open={open}
@@ -31,17 +33,11 @@ export const SettingsModal = ({ downloadDestination, getDownloadDestination: get
       </div>
     </DialogContent>
     <DialogActions>
-      <Button color="primary" onClick={onClose}>
+      <Button color="secondary" onClick={onClose}>
         Close
       </Button>
     </DialogActions>
-  </Dialog>;
+  </Dialog>
+};
 
-export default connect(
-  (state: ReducerState) => ({
-    downloadDestination: state.downloadDestination,
-  }),
-  {
-    getDownloadDestination,
-  }
-)(SettingsModal);
+export default SettingsModal;
