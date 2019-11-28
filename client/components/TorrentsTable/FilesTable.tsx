@@ -47,10 +47,10 @@ const FilesTable = ({ files, magnetLink }: Props) => {
         <T color="textPrimary" variant="subtitle2" style={{ flex: 1 }}>
           Selected
         </T>
-        <T variant="subtitle2" style={{ flex: 8 }}>
+        <T color="textPrimary" variant="subtitle2" style={{ flex: 8 }}>
           File Name
         </T>
-        <T variant="subtitle2" style={{ flex: 8 }}>
+        <T color="textPrimary" variant="subtitle2" style={{ flex: 8 }}>
           Size
         </T>
       </div>

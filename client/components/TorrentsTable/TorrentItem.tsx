@@ -1,5 +1,6 @@
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItem from '@material-ui/core/ListItem/ListItem';
+import T from '@material-ui/core/Typography';
 import * as React from 'react';
 import { Torrent } from '../../../types';
 import * as moment from 'moment';
@@ -18,9 +19,9 @@ const TorrentItem = ({ onPress, selected, style, torrent }: Props) => (
       checked={selected}
       style={styles.checkbox}
     />
-    <div style={style}>{torrent.name}</div>
-    <div style={style}>{getSizeStr(torrent.size)}</div>
-    <div style={style}>{moment(torrent.added).fromNow()}</div>
+    <T color="textPrimary" variant="body1" style={style}>{torrent.name}</T>
+    <T color="textPrimary" variant="body1" style={style}>{getSizeStr(torrent.size)}</T>
+    <T color="textPrimary" variant="body1" style={style}>{moment(torrent.added).fromNow()}</T>
   </ListItem>
 );
 

@@ -1,5 +1,4 @@
 import Checkbox from '@material-ui/core/Checkbox';
-import green from '@material-ui/core/colors/green';
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import Tab from '@material-ui/core/Tab';
@@ -92,14 +91,12 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
             <Tab label="Graph" />
           </Tabs>
           {tab === 0 && <div>
-            {selectedTorrent &&
-              <FilesTable
+            {selectedTorrent
+              ? <FilesTable
                 files={selectedTorrent?.files}
                 magnetLink={selectedTorrent?.magnetLink}
-              />}
-
-            {!selectedTorrent &&
-              <h2 style={{ margin: '1rem auto', textAlign: 'center', }}>Select Torrent</h2>
+              />
+              : <h2 style={styles.selectTorrent}>Select Torrent</h2>
             }
           </div>}
           {tab === 1 && <div>Fancy Graph</div>}
@@ -144,7 +141,8 @@ const styles = {
     flexDirection: 'row',
     padding: '1rem 0',
   } as React.CSSProperties,
-  toolbar: {
-    backgroundColor: green.A400,
-  },
+  selectTorrent: {
+    margin: '1rem auto',
+    textAlign: 'center',
+  } as React.CSSProperties,
 };
