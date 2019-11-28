@@ -27,7 +27,7 @@ export const setDownloadDestination = (path: string) => ({
   type: SET_DOWNLOAD_DESTINATION,
 });
 
-export const setDividerPosition = (id: string, percent: number) => ({
+export const setDividerPosition = (id: string, percent: number[]) => ({
   payload: {
     [id]: percent,
   },

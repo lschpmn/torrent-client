@@ -16,8 +16,8 @@ type Props = {
 const VerticalSections = ({ child1, child2, id }: Props) => {
   const setDividerPositionAction = useAction(setDividerPosition);
   const [isTracking, setIsTracking] = useState(false);
-  const [elementBox, setElementBox] = useState(null as null | ClientRect);
   const [node, setNode] = useState(null);
+  const elementBox = useElementBox(node);
   const mouseY = useMouseY(isTracking, setIsTracking);
   const savedPercent = useSelector((state: ReducerState) => state.dividerPositions[id]) || 50;
 
@@ -26,8 +26,26 @@ const VerticalSections = ({ child1, child2, id }: Props) => {
       let _percent = ((mouseY - elementBox.top) / elementBox.height * 100);
       _percent = Math.max(Math.min(_percent, 95), 5);
       return Math.round(_percent * 1000) / 1000;
-    } else return savedPercent;
+    } else return savedPercent as number;
   }, [mouseY, savedPercent]);
+
+  useEffect(() => {
+    if (!isTracking && percent && mouseY) setDividerPositionAction(id, percent as any);
+  }, [isTracking]);
+
+  return <div style={styles.container} ref={setNode}>
+    <div style={{ ...styles.section, flex: percent }}>{child1}</div>
+    <Divider
+      onDoubleClick={() => setDividerPositionAction(id, 50 as any)}
+      onMouseDown={() => setIsTracking(true)}
+      style={{ cursor: 'ns-resize', height: '0.25rem' }}
+    />
+    <div style={{ ...styles.section, flex: 100 - percent }}>{child2}</div>
+  </div>;
+};
+
+const useElementBox = (node) => {
+  const [elementBox, setElementBox] = useState(null as null | ClientRect);
 
   useEffect(() => {
     if (node) {
@@ -39,19 +57,7 @@ const VerticalSections = ({ child1, child2, id }: Props) => {
     }
   }, [node]);
 
-  useEffect(() => {
-    if (!isTracking && percent && mouseY) setDividerPositionAction(id, percent);
-  }, [isTracking]);
-
-  return <div style={styles.container} ref={setNode}>
-    <div style={{ ...styles.section, flex: percent }}>{child1}</div>
-    <Divider
-      onDoubleClick={() => setDividerPositionAction(id, 50)}
-      onMouseDown={() => setIsTracking(true)}
-      style={{ cursor: 'ns-resize', height: '0.25rem' }}
-    />
-    <div style={{ ...styles.section, flex: 100 - percent }}>{child2}</div>
-  </div>;
+  return elementBox;
 };
 
 const useMouseY = (isTracking, setIsTracking): number => {
