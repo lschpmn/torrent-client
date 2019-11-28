@@ -3,13 +3,13 @@ import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
+import T from '@material-ui/core/Typography';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { Torrent } from '../../../types';
-import HorizontalSections from '../shared/HorizontalSections';
-import VerticalSections from '../shared/VerticalSections';
+import DynamicSections from '../shared/DynamicSections';
 import FilesTable from './FilesTable';
 import TorrentItem from './TorrentItem';
 
@@ -52,7 +52,7 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
           style={{ width: '2rem' }}
         />
       </div>
-      <HorizontalSections id="torrents-table">
+      <DynamicSections id="torrents-table">
         <div onMouseDown={() => changeSort('name')} style={styles.section}>
           Name
           {sort === 'name' && <SortIcon ascending={sortAscending} />}
@@ -65,48 +65,43 @@ const TorrentsTable = ({ allSelected, selectAll, selected, toggleSelected, torre
           Added
           {sort === 'added' && <SortIcon ascending={sortAscending} />}
         </div>
-      </HorizontalSections>
+      </DynamicSections>
     </Paper>
 
-    <VerticalSections
-      child1={
-        <List>
-          {sortedTorrents
-            .map((torrent, i) => (
-              <TorrentItem
-                key={i}
-                onPress={() => toggleSelected(torrent.magnetLink)}
-                selected={!!selected[torrent.magnetLink]}
-                style={styles.section}
-                torrent={torrent}
-              />
-            ))
+    <DynamicSections id="app-separation" isVertical>
+      <List style={{ width: '100%' }}>
+        {sortedTorrents
+          .map((torrent, i) => (
+            <TorrentItem
+              key={i}
+              onPress={() => toggleSelected(torrent.magnetLink)}
+              selected={!!selected[torrent.magnetLink]}
+              style={styles.section}
+              torrent={torrent}
+            />
+          ))
+        }
+      </List>
+      <div style={{ width: '100%' }}>
+        <Tabs
+          onChange={(e, val) => setTab(val)}
+          value={tab}
+        >
+          <Tab label="Files" />
+          <Tab label="Graph" />
+        </Tabs>
+        {tab === 0 && <div>
+          {selectedTorrent
+            ? <FilesTable
+              files={selectedTorrent?.files}
+              magnetLink={selectedTorrent?.magnetLink}
+            />
+            : <T style={styles.selectTorrent} variant="h3" color="textPrimary">Select Torrent</T>
           }
-        </List>
-      }
-      child2={
-        <div>
-          <Tabs
-            onChange={(e, val) => setTab(val)}
-            value={tab}
-          >
-            <Tab label="Files" />
-            <Tab label="Graph" />
-          </Tabs>
-          {tab === 0 && <div>
-            {selectedTorrent
-              ? <FilesTable
-                files={selectedTorrent?.files}
-                magnetLink={selectedTorrent?.magnetLink}
-              />
-              : <h2 style={styles.selectTorrent}>Select Torrent</h2>
-            }
-          </div>}
-          {tab === 1 && <div>Fancy Graph</div>}
-        </div>
-      }
-      id="main-table"
-    />
+        </div>}
+        {tab === 1 && <div>Fancy Graph</div>}
+      </div>
+    </DynamicSections>
   </div>;
 };
 

@@ -16,10 +16,11 @@ const initPercents = children => Array(children.length).fill(100 / children.leng
 type Props = {
   children: React.ReactNode[],
   id: string,
+  isVertical?: boolean,
   listenOnly?: boolean,
 };
 
-const HorizontalSections = ({ children, id, listenOnly }: Props) => {
+const DynamicSections = ({ children, id, isVertical, listenOnly }: Props) => {
   const setDividerPositionAction = useAction(setDividerPosition);
   const setDividerPositionServerAction = useCallback(debounce(useAction(setDividerPositionServer), 100), []);
   const savedPercents = useSelector((state: ReducerState) => state.dividerPositions[id]) as number[];
@@ -28,7 +29,7 @@ const HorizontalSections = ({ children, id, listenOnly }: Props) => {
   const [percents, setPercents] = useState(savedPercents || initPercents(children));
   const [trackingIndex, setTrackingIndex] = useState(null);
   const elementBox = useElementBox(node);
-  const mouseX = useMouseX(isTracking, setIsTracking);
+  const mouse = useMouse(isTracking, setIsTracking, isVertical);
   const classes = useStyles({});
 
   useEffect(() => {
@@ -38,8 +39,10 @@ const HorizontalSections = ({ children, id, listenOnly }: Props) => {
   }, [percents]);
 
   useEffect(() => {
-    if (isTracking && mouseX) {
-      let overallPercent = ((mouseX - elementBox.left) / elementBox.width * 100);
+    if (isTracking && mouse) {
+      let overallPercent = isVertical
+        ? ((mouse - elementBox.top) / elementBox.height * 100)
+        : ((mouse - elementBox.left) / elementBox.width * 100);
       overallPercent = Math.max(Math.min(overallPercent, 95), 5);
       overallPercent = Math.round(overallPercent * 1000) / 1000;
 
@@ -56,7 +59,7 @@ const HorizontalSections = ({ children, id, listenOnly }: Props) => {
 
       setPercents(newPercents);
     }
-  }, [isTracking, mouseX, trackingIndex]);
+  }, [isTracking, mouse, trackingIndex]);
 
   useEffect(() => {
     if (isTracking && percents) {
@@ -69,20 +72,31 @@ const HorizontalSections = ({ children, id, listenOnly }: Props) => {
     if (!isTracking && savedPercents) setPercents(savedPercents);
   }, [savedPercents]);
 
-  return <div className={classes.container} ref={setNode}>
+  return <div className={classes.container} style={{ flexDirection: isVertical ? 'column' : 'row' }} ref={setNode}>
     {children.map((child, i) =>
-      <div key={i} className={classes.item} style={{ flex: percents[i] }}>
+      <div
+        key={i}
+        className={classes.item}
+        style={{
+          flex: percents[i],
+          flexDirection: isVertical ? 'column' : 'row',
+        }}
+      >
         {i !== 0 &&
-          <Divider
-            className={classes.divider}
-            onMouseDown={() => {
-              if (listenOnly) return;
-              setIsTracking(true);
-              setTrackingIndex(i);
-            }}
-            orientation="vertical"
-            style={{ cursor: listenOnly ? 'inherit' : 'ew-resize' }}
-          />
+        <Divider
+          className={classes.divider}
+          onMouseDown={() => {
+            if (listenOnly) return;
+            setIsTracking(true);
+            setTrackingIndex(i);
+          }}
+          orientation={isVertical ? 'horizontal' : 'vertical'}
+          style={{
+            cursor: listenOnly ? 'inherit' : `${isVertical ? 'ns' : 'ew'}-resize`,
+            height: isVertical ? 3 : 'inherit',
+            width: isVertical ? 'inherit' : 3,
+          }}
+        />
         }
         {child}
       </div>
@@ -93,14 +107,15 @@ const HorizontalSections = ({ children, id, listenOnly }: Props) => {
 const useStyles = makeStyles({
   container: {
     display: 'flex',
+    height: '100%',
     width: '100%',
   },
   divider: {
     marginRight: '0.25rem',
-    width: 3,
   } as React.CSSProperties,
   item: {
     display: 'flex',
+    overflow: 'auto',
     wordBreak: 'break-all',
   } as React.CSSProperties,
 } as any);
@@ -121,13 +136,13 @@ const useElementBox = (node) => {
   return elementBox;
 };
 
-const useMouseX = (isTracking, setIsTracking): number => {
-  const [mouseX, setMouseX] = useState(null);
+const useMouse = (isTracking, setIsTracking, isVertical): number => {
+  const [mouse, setMouse] = useState(null);
 
   useEffect(() => {
     if (isTracking) {
       const trackMouseUp = () => setIsTracking(false);
-      const trackMouseMovement = throttle(e => setMouseX(e.clientX), 15);
+      const trackMouseMovement = throttle(e => setMouse(isVertical ? e.clientY : e.clientX), 15);
 
       document.addEventListener('mouseup', trackMouseUp);
       document.addEventListener('mousemove', trackMouseMovement);
@@ -137,11 +152,11 @@ const useMouseX = (isTracking, setIsTracking): number => {
         document.removeEventListener('mousemove', trackMouseMovement);
       }
     } else {
-      setMouseX(null);
+      setMouse(null);
     }
   }, [isTracking]);
 
-  return mouseX;
+  return mouse;
 };
 
-export default HorizontalSections
+export default DynamicSections;

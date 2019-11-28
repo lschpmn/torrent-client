@@ -1,11 +1,11 @@
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItem from '@material-ui/core/ListItem/ListItem';
 import T from '@material-ui/core/Typography';
+import * as moment from 'moment';
 import * as React from 'react';
 import { Torrent } from '../../../types';
-import * as moment from 'moment';
 import { getSizeStr } from '../../lib/utils';
-import HorizontalSections from '../shared/HorizontalSections';
+import DynamicSections from '../shared/DynamicSections';
 
 type Props = {
   onPress?: () => void,
@@ -20,11 +20,11 @@ const TorrentItem = ({ onPress, selected, style, torrent }: Props) => (
       checked={selected}
       style={styles.checkbox}
     />
-    <HorizontalSections id="torrents-table" listenOnly>
+    <DynamicSections id="torrents-table" listenOnly>
       <T color="textPrimary" variant="body1" style={style}>{torrent.name}</T>
       <T color="textPrimary" variant="body1" style={style}>{getSizeStr(torrent.size)}</T>
       <T color="textPrimary" variant="body1" style={style}>{moment(torrent.added).fromNow()}</T>
-    </HorizontalSections>
+    </DynamicSections>
   </ListItem>
 );
 

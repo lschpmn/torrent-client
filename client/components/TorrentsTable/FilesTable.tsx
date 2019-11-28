@@ -10,7 +10,7 @@ import { useCallback, useState } from 'react';
 import { File } from '../../../types';
 import { setFileSelected } from '../../lib/action-creators';
 import { getSizeStr, useAction } from '../../lib/utils';
-import HorizontalSections from '../shared/HorizontalSections';
+import DynamicSections from '../shared/DynamicSections';
 
 type Props = {
   files: File[],
@@ -45,7 +45,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
   return <div>
     <Paper elevation={0} square>
       <div style={{ padding: '1rem' }}>
-        <HorizontalSections id="file-table-head">
+        <DynamicSections id="file-table-head">
           <T color="textPrimary" variant="subtitle2" style={{ flex: 1 }}>
             Selected
           </T>
@@ -55,7 +55,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
           <T color="textPrimary" variant="subtitle2" style={{ flex: 8 }}>
             Size
           </T>
-        </HorizontalSections>
+        </DynamicSections>
       </div>
       <Divider/>
     </Paper>
@@ -67,7 +67,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
           key={file.name}
           onContextMenu={(e) => mouseClick(e, file.name)}
         >
-          <HorizontalSections id="file-table-head" listenOnly>
+          <DynamicSections id="file-table-head" listenOnly>
             <T color="textPrimary" variant="body2" style={{  flex: 1 }}>
               {String(file.selected)}
             </T>
@@ -77,7 +77,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
             <T color="textPrimary" variant="body2" style={{ flex: 8 }}>
               {getSizeStr(file.size)}
             </T>
-          </HorizontalSections>
+          </DynamicSections>
         </ListItem>
       ))}
     </List>

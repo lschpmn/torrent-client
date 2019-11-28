@@ -25,13 +25,14 @@ const App = () => {
   const [showSettings, setShowSettings] = useState(false);
   const classes = useStyles({});
 
+  const activeTorrents = torrents.filter(torrent => !torrent.pending);
   const pendingTorrents = torrents.filter(torrent => torrent.pending);
-  const allSelected = torrents.every(torrent => selected[torrent.magnetLink]);
+  const allSelected = activeTorrents.every(torrent => selected[torrent.magnetLink]);
   const greyOut = Object.values(selected).every(selected => !selected);
 
   const selectAll = useCallback(() => {
-    setSelected(torrents.reduce((obj, torrent) => ({ ...obj, [torrent.magnetLink]: !allSelected }), {}));
-  }, [allSelected, torrents]);
+    setSelected(activeTorrents.reduce((obj, torrent) => ({ ...obj, [torrent.magnetLink]: !allSelected }), {}));
+  }, [allSelected, activeTorrents]);
   const toggleAddTorrent = useCallback(() => setShowAddTorrent(!showAddTorrent), [showAddTorrent]);
   const toggleDelete = useCallback(() => setShowDelete(!showDelete), [showDelete]);
   const toggleSettings = useCallback(() => setShowSettings(!showSettings), [showSettings]);
@@ -41,7 +42,7 @@ const App = () => {
 
   return <div className={classes.container}>
     <div>
-      <AppBar position='static'>
+      <AppBar color="primary" position='static'>
         <Toolbar>
           <IconButton className={classes.white} disabled={greyOut} >
             <Pause/>
@@ -67,14 +68,14 @@ const App = () => {
       allSelected={allSelected}
       selectAll={selectAll}
       toggleSelected={toggleSelected}
-      torrents={torrents.filter(torrent => !torrent.pending)}
+      torrents={activeTorrents}
     />
 
     <AddTorrentModal onClose={toggleAddTorrent} open={showAddTorrent}/>
     <DeleteModal
       open={showDelete}
       onClose={toggleDelete}
-      torrents={torrents.filter(torrent => selected[torrent.magnetLink])}
+      torrents={activeTorrents.filter(torrent => selected[torrent.magnetLink])}
     />
     <SettingsModal onClose={toggleSettings} open={showSettings}/>
     {!!pendingTorrents.length &&
@@ -85,6 +86,7 @@ const App = () => {
 
 const useStyles = makeStyles(theme => ({
   container: {
+    backgroundColor: theme.palette.background.default,
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
