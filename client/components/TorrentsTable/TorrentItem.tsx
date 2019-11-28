@@ -31,12 +31,6 @@ const styles = {
     width: '2rem',
   },
   container: {
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-  paper: {
-    borderRadius: 0,
-    padding: '0.5rem',
-    width: '100%',
+   padding: 0,
   },
 };

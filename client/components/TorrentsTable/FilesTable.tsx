@@ -1,10 +1,10 @@
+import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TC from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TR from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import T from '@material-ui/core/Typography';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { File } from '../../../types';
@@ -41,42 +41,42 @@ const FilesTable = ({ files, magnetLink }: Props) => {
     setSelectedFileName(fileName);
   }, []);
 
-  return <div style={styles.container}>
-    <Table size={'small'}>
-      <TableHead>
-        <TR style={{ display: 'flex' }}>
-          <TC style={{ flex: 1 }}>
-            Selected
-          </TC>
-          <TC style={{ flex: 9 }}>
-            File Name
-          </TC>
-          <TC style={{ flex: 9 }}>
-            Size
-          </TC>
-        </TR>
-      </TableHead>
-      <TableBody>
-        {files.map(file => (
-          <TR
-            hover
-            key={file.name}
-            onContextMenu={(e) => mouseClick(e, file.name)}
-            style={styles.fileContainer}
-          >
-            <TC style={{ flex: 1 }}>
-              {String(file.selected)}
-            </TC>
-            <TC style={{ flex: 9 }}>
-              {file.name}
-            </TC>
-            <TC style={{ flex: 9 }}>
-              {getSizeStr(file.size)}
-            </TC>
-          </TR>
-        ))}
-      </TableBody>
-    </Table>
+  return <div>
+    <Paper elevation={0} square>
+      <div style={{ display: 'flex', padding: '1rem' }}>
+        <T color="textPrimary" variant="subtitle2" style={{ flex: 1 }}>
+          Selected
+        </T>
+        <T variant="subtitle2" style={{ flex: 8 }}>
+          File Name
+        </T>
+        <T variant="subtitle2" style={{ flex: 8 }}>
+          Size
+        </T>
+      </div>
+      <Divider/>
+    </Paper>
+    <List style={{ paddingTop: 0 }}>
+      {files.map(file => (
+        <ListItem
+          button
+          divider
+          key={file.name}
+          onContextMenu={(e) => mouseClick(e, file.name)}
+        >
+          <T color="textPrimary" variant="body2" style={{  flex: 1 }}>
+            {String(file.selected)}
+          </T>
+          <T color="textPrimary" variant="body2" style={{ flex: 8 }}>
+            {file.name}
+          </T>
+          <T color="textPrimary" variant="body2" style={{ flex: 8 }}>
+            {getSizeStr(file.size)}
+          </T>
+        </ListItem>
+      ))}
+    </List>
+
     <Menu
       anchorReference="anchorPosition"
       anchorPosition={({
@@ -99,12 +99,3 @@ const FilesTable = ({ files, magnetLink }: Props) => {
 };
 
 export default FilesTable;
-
-const styles = {
-  container: {
-  },
-  fileContainer: {
-    cursor: 'pointer',
-    display: 'flex',
-  } as React.CSSProperties,
-};
