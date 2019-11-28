@@ -18,7 +18,7 @@ import TorrentsTable from './components/TorrentsTable';
 import { ReducerState } from './lib/types';
 
 const App = () => {
-  const torrents = useSelector((state: ReducerState) => state.torrents).filter(torrent => !torrent.pending);
+  const torrents = useSelector((state: ReducerState) => state.torrents);
   const [selected, setSelected] = useState({});
   const [showAddTorrent, setShowAddTorrent] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -67,7 +67,7 @@ const App = () => {
       allSelected={allSelected}
       selectAll={selectAll}
       toggleSelected={toggleSelected}
-      torrents={torrents}
+      torrents={torrents.filter(torrent => !torrent.pending)}
     />
 
     <AddTorrentModal onClose={toggleAddTorrent} open={showAddTorrent}/>

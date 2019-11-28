@@ -15,9 +15,10 @@ const initPercents = children => Array(children.length).fill(100 / children.leng
 type Props = {
   children: React.ReactNode[],
   id: string,
+  listenOnly?: boolean,
 };
 
-const HorizontalSections = ({ children, id }: Props) => {
+const HorizontalSections = ({ children, id, listenOnly }: Props) => {
   const setDividerPositionAction = useAction(setDividerPosition);
   const savedPercents = useSelector((state: ReducerState) => state.dividerPositions[id]) as number[];
   const [isTracking, setIsTracking] = useState(false);
@@ -61,22 +62,22 @@ const HorizontalSections = ({ children, id }: Props) => {
   }, [percents]);
 
   useEffect(() => {
-    if (!isTracking && savedPercents) {
-      setPercents(savedPercents);
-    }
+    if (!isTracking && savedPercents) setPercents(savedPercents);
   }, [savedPercents]);
 
-  return <div style={{ display: 'flex', width: '100%' }} ref={setNode}>
+  return <div className={classes.container} ref={setNode}>
     {children.map((child, i) =>
       <div key={i} className={classes.item} style={{ flex: percents[i] }}>
         {i !== 0 &&
           <Divider
             className={classes.divider}
-            onMouseDown={e => {
+            onMouseDown={() => {
+              if (listenOnly) return;
               setIsTracking(true);
               setTrackingIndex(i);
             }}
             orientation="vertical"
+            style={{ cursor: listenOnly ? 'inherit' : 'ew-resize' }}
           />
         }
         {child}
@@ -84,6 +85,21 @@ const HorizontalSections = ({ children, id }: Props) => {
     )}
   </div>;
 };
+
+const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    width: '100%',
+  },
+  divider: {
+    marginRight: '0.25rem',
+    width: 3,
+  } as React.CSSProperties,
+  item: {
+    display: 'flex',
+    wordBreak: 'break-all',
+  } as React.CSSProperties,
+} as any);
 
 const useElementBox = (node) => {
   const [elementBox, setElementBox] = useState(null as null | ClientRect);
@@ -125,15 +141,3 @@ const useMouseX = (isTracking, setIsTracking): number => {
 };
 
 export default HorizontalSections
-
-const useStyles = makeStyles({
-  divider: {
-    cursor: 'ew-resize',
-    marginRight: '0.25rem',
-    width: 3,
-  } as React.CSSProperties,
-  item: {
-    display: 'flex',
-    wordBreak: 'break-all',
-  } as React.CSSProperties,
-} as any);

@@ -56,7 +56,7 @@ const PendingTorrentModal = ({ torrent }: Props) => {
 
         <h2 style={{ marginTop: '3rem' }}>Files</h2>
 
-        <Table size="medium">
+        <Table size="small">
           <TableHead>
             <TR>
               <TC padding="checkbox">

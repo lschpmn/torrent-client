@@ -67,7 +67,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
           key={file.name}
           onContextMenu={(e) => mouseClick(e, file.name)}
         >
-          <HorizontalSections id="file-table-head">
+          <HorizontalSections id="file-table-head" listenOnly>
             <T color="textPrimary" variant="body2" style={{  flex: 1 }}>
               {String(file.selected)}
             </T>
