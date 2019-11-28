@@ -1,10 +1,11 @@
 import Divider from '@material-ui/core/Divider';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import throttle from 'lodash/throttle';
+import debounce from 'lodash/debounce';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { setDividerPosition } from '../../lib/action-creators';
+import { setDividerPosition, setDividerPositionServer } from '../../lib/action-creators';
 import { ReducerState } from '../../lib/types';
 import { useAction } from '../../lib/utils';
 
@@ -20,6 +21,7 @@ type Props = {
 
 const HorizontalSections = ({ children, id, listenOnly }: Props) => {
   const setDividerPositionAction = useAction(setDividerPosition);
+  const setDividerPositionServerAction = useCallback(debounce(useAction(setDividerPositionServer), 100), []);
   const savedPercents = useSelector((state: ReducerState) => state.dividerPositions[id]) as number[];
   const [isTracking, setIsTracking] = useState(false);
   const [node, setNode] = useState(null);
@@ -58,7 +60,10 @@ const HorizontalSections = ({ children, id, listenOnly }: Props) => {
   }, [isTracking, mouseX, trackingIndex]);
 
   useEffect(() => {
-    if (isTracking && percents) setDividerPositionAction(id, percents);
+    if (isTracking && percents) {
+      setDividerPositionAction(id, percents);
+      setDividerPositionServerAction(id, percents);
+    }
   }, [percents]);
 
   useEffect(() => {

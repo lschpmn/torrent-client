@@ -3,6 +3,7 @@ import {
   DELETE_TORRENT,
   GET_DOWNLOAD_DESTINATION,
   SET_DIVIDER_POSITION,
+  SET_DIVIDER_POSITION_SERVER,
   SET_DOWNLOAD_DESTINATION,
   SET_FILE_SELECTED,
   START_TORRENT,
@@ -27,11 +28,18 @@ export const setDownloadDestination = (path: string) => ({
   type: SET_DOWNLOAD_DESTINATION,
 });
 
-export const setDividerPosition = (id: string, percent: number[]) => ({
+export const setDividerPosition = (id: string, percents: number[]) => ({
   payload: {
-    [id]: percent,
+    [id]: percents,
   },
   type: SET_DIVIDER_POSITION,
+});
+
+export const setDividerPositionServer = (id: string, percents: number[]) => ({
+  payload: {
+    [id]: percents,
+  },
+  type: SET_DIVIDER_POSITION_SERVER,
 });
 
 export const setFileSelected = (magnetLink: string, fileName: string, selected: boolean) => ({

@@ -11,4 +11,5 @@ export const SET_TORRENTS = 'SET_TORRENTS';
 export const START_TORRENT = 'START_TORRENT@server';
 
 // Divider Actions
-export const SET_DIVIDER_POSITION = 'SET_DIVIDER_POSITION@server';
+export const SET_DIVIDER_POSITION_SERVER = 'SET_DIVIDER_POSITION@server';
+export const SET_DIVIDER_POSITION = 'SET_DIVIDER_POSITION';

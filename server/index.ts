@@ -8,7 +8,7 @@ import * as socketIO from 'socket.io';
 import {
   ADD_TORRENT,
   DELETE_TORRENT,
-  SET_DIVIDER_POSITION,
+  SET_DIVIDER_POSITION_SERVER,
   SET_DOWNLOAD_DESTINATION,
   SET_FILE_SELECTED,
   START_TORRENT,
@@ -64,7 +64,7 @@ async function startServer() {
 
       switch (type) {
         // divider position
-        case SET_DIVIDER_POSITION:
+        case SET_DIVIDER_POSITION_SERVER:
           await db
             .get('dividerPositions')
             // @ts-ignore
