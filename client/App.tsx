@@ -2,10 +2,7 @@ import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Toolbar from '@material-ui/core/Toolbar';
-import Add from '@material-ui/icons/Add';
-import Delete from '@material-ui/icons/Delete';
 import Pause from '@material-ui/icons/Pause';
-import Settings from '@material-ui/icons/Settings';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { hot } from 'react-hot-loader/root';
@@ -20,9 +17,6 @@ import { ReducerState } from './lib/types';
 const App = () => {
   const torrents = useSelector((state: ReducerState) => state.torrents);
   const [selected, setSelected] = useState({});
-  const [showAddTorrent, setShowAddTorrent] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const classes = useStyles({});
 
   const activeTorrents = torrents.filter(torrent => !torrent.pending);
@@ -31,11 +25,11 @@ const App = () => {
   const greyOut = Object.values(selected).every(selected => !selected);
 
   const selectAll = useCallback(() => {
-    setSelected(activeTorrents.reduce((obj, torrent) => ({ ...obj, [torrent.magnetLink]: !allSelected }), {}));
+    const newSelected = activeTorrents
+      .reduce((obj, torrent) => ({ ...obj, [torrent.magnetLink]: !allSelected }), {});
+    setSelected(newSelected);
   }, [allSelected, activeTorrents]);
-  const toggleAddTorrent = useCallback(() => setShowAddTorrent(!showAddTorrent), [showAddTorrent]);
-  const toggleDelete = useCallback(() => setShowDelete(!showDelete), [showDelete]);
-  const toggleSettings = useCallback(() => setShowSettings(!showSettings), [showSettings]);
+
   const toggleSelected = useCallback((magnetLink: string) => {
     setSelected({ ...selected, [magnetLink]: !selected[magnetLink] });
   }, [selected]);
@@ -47,18 +41,15 @@ const App = () => {
           <IconButton className={classes.white} disabled={greyOut} >
             <Pause/>
           </IconButton>
-          <IconButton className={classes.deleteIcon} disabled={greyOut} onClick={toggleDelete}>
-            <Delete/>
-          </IconButton>
+          <DeleteModal
+            disabled={greyOut}
+            torrents={activeTorrents.filter(torrent => selected[torrent.magnetLink])}
+          />
 
-          <div style={{ flexGrow: 1 }}/>
+          <div style={{ flex: 1 }}/>
 
-          <IconButton className={classes.white} onMouseDown={toggleAddTorrent}>
-            <Add/>
-          </IconButton>
-          <IconButton className={classes.white} onClick={toggleSettings}>
-            <Settings/>
-          </IconButton>
+          <AddTorrentModal/>
+          <SettingsModal/>
         </Toolbar>
       </AppBar>
     </div>
@@ -71,13 +62,6 @@ const App = () => {
       torrents={activeTorrents}
     />
 
-    <AddTorrentModal onClose={toggleAddTorrent} open={showAddTorrent}/>
-    <DeleteModal
-      open={showDelete}
-      onClose={toggleDelete}
-      torrents={activeTorrents.filter(torrent => selected[torrent.magnetLink])}
-    />
-    <SettingsModal onClose={toggleSettings} open={showSettings}/>
     {!!pendingTorrents.length &&
       <PendingTorrentModal torrent={pendingTorrents[0]} />
     }
@@ -90,9 +74,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-  },
-  deleteIcon: {
-    color: theme.palette.error.main,
   },
   white: {
     color: theme.palette.common.white,

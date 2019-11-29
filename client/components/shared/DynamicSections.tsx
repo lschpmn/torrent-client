@@ -32,11 +32,12 @@ const DynamicSections = ({ children, id, isVertical, listenOnly }: Props) => {
   const mouse = useMouse(isTracking, setIsTracking, isVertical);
   const classes = useStyles({});
 
-  useEffect(() => {
+  // put back when finishing up component
+  /*useEffect(() => {
     console.log(percents);
     const total = percents.reduce((tot, val) => tot + val, 0);
     console.log(`total: ${total}`);
-  }, [percents]);
+  }, [percents]);*/
 
   useEffect(() => {
     if (isTracking && mouse) {
