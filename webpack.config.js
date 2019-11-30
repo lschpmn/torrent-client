@@ -5,12 +5,14 @@ const { join } = require('path');
 module.exports = {
   context: join(__dirname, 'client'),
 
-  entry: ['react-hot-loader/patch', './index.tsx'],
-
-  output: {
-    path: join(__dirname, 'public'),
-    filename: 'bundle.js'
+  devServer: {
+    contentBase: join(__dirname, 'client'),
+    port: 5000,
   },
+
+  devtool: 'source-map',
+
+  entry: ['react-hot-loader/patch', './index.tsx'],
 
   mode: 'development',
 
@@ -39,6 +41,11 @@ module.exports = {
     ],
   },
 
+  output: {
+    path: join(__dirname, 'public'),
+    filename: 'bundle.js'
+  },
+
   resolve: {
     alias: {
       'react-dom': '@hot-loader/react-dom',
@@ -46,12 +53,5 @@ module.exports = {
     extensions: ['.ts', '.tsx', '.js', '.json'],
   },
 
-  devServer: {
-    contentBase: join(__dirname, 'client'),
-    port: 5000,
-  },
-
   target: 'electron-renderer',
-
-  devtool: 'source-map',
 };
