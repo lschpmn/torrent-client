@@ -33,7 +33,7 @@ export let port;
 
 async function startServer() {
   port = await getIncrementalPort(START_PORT);
-  await writePortToIndex(port);
+  await writePortToIndex();
 
   const server = createServer();
   const io = socketIO(server, {
@@ -115,7 +115,7 @@ async function startServer() {
   });
 }
 
-async function writePortToIndex(port: number) {
+async function writePortToIndex() {
   const index = await read(join(__dirname, '../client/index.html'));
   await write(
     join(__dirname, '../public/index.html'),
