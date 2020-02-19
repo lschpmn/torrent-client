@@ -22,7 +22,7 @@ type Props = {
 
 const DynamicSections = ({ children, id, isVertical, listenOnly }: Props) => {
   const setDividerPositionAction = useAction(setDividerPosition);
-  const setDividerPositionServerAction = useCallback(debounce(useAction(setDividerPositionServer), 100), []);
+  const setDividerPositionServerAction = useCallback(debounce(useAction(setDividerPositionServer), 250), []);
   const savedPercents = useSelector((state: ReducerState) => state.dividerPositions[id]) as number[];
   const [isTracking, setIsTracking] = useState(false);
   const [node, setNode] = useState(null);
@@ -74,7 +74,7 @@ const DynamicSections = ({ children, id, isVertical, listenOnly }: Props) => {
   }, [savedPercents]);
 
   return <div className={classes.container} style={{ flexDirection: isVertical ? 'column' : 'row' }} ref={setNode}>
-    {children.map((child, i) =>
+    {children.map((child, i) => (
       <div
         key={i}
         className={classes.item}
@@ -83,25 +83,24 @@ const DynamicSections = ({ children, id, isVertical, listenOnly }: Props) => {
           flexDirection: isVertical ? 'column' : 'row',
         }}
       >
-        {i !== 0 &&
-        <Divider
-          className={classes.divider}
-          onMouseDown={() => {
-            if (listenOnly) return;
-            setIsTracking(true);
-            setTrackingIndex(i);
-          }}
-          orientation={isVertical ? 'horizontal' : 'vertical'}
-          style={{
-            cursor: listenOnly ? 'inherit' : `${isVertical ? 'ns' : 'ew'}-resize`,
-            height: isVertical ? 3 : 'inherit',
-            width: isVertical ? 'inherit' : 3,
-          }}
-        />
-        }
+        {i !== 0 && !listenOnly && (
+          <Divider
+            className={classes.divider}
+            onMouseDown={() => {
+              setIsTracking(true);
+              setTrackingIndex(i);
+            }}
+            orientation={isVertical ? 'horizontal' : 'vertical'}
+            style={{
+              cursor: `${isVertical ? 'ns' : 'ew'}-resize`,
+              height: isVertical ? 1 : 'inherit',
+              width: isVertical ? 'inherit' : 1,
+            }}
+          />
+        )}
         {child}
       </div>
-    )}
+    ))}
   </div>;
 };
 
@@ -112,6 +111,8 @@ const useStyles = makeStyles({
     width: '100%',
   },
   divider: {
+    borderRight: 'rgba(0,0,0,0) 0.5rem solid',
+    backgroundClip: 'content-box',
     marginRight: '0.25rem',
   } as React.CSSProperties,
   item: {
@@ -126,7 +127,7 @@ const useElementBox = (node) => {
 
   useEffect(() => {
     if (node) {
-      const getSizes = throttle(() => setElementBox(node.getBoundingClientRect()), 100);
+      const getSizes = throttle(() => setElementBox(node.getBoundingClientRect()), 50);
 
       getSizes();
       window.addEventListener('resize', getSizes);
@@ -151,7 +152,7 @@ const useMouse = (isTracking, setIsTracking, isVertical): number => {
       return () => {
         document.removeEventListener('mouseup', trackMouseUp);
         document.removeEventListener('mousemove', trackMouseMovement);
-      }
+      };
     } else {
       setMouse(null);
     }

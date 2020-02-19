@@ -43,12 +43,12 @@ const PendingTorrentModal = ({ torrent }: Props) => {
     <DialogContent>
       <div style={styles.container}>
         <div style={{ display: 'flex' }}>
-          <div style={{ flex: 1 }}>
+          <div style={styles.titleContainer}>
             <h4>Name</h4>
             <div>{torrent.name}</div>
           </div>
 
-          <div style={{ flex: 1 }}>
+          <div style={styles.titleContainer}>
             <h4>Size</h4>
             <div>{getSizeStr(torrent.size)}</div>
           </div>
@@ -142,4 +142,8 @@ const styles = {
     height: '100%',
     flexDirection: 'column',
   } as React.CSSProperties,
+  titleContainer: {
+    flex: 1,
+    padding: '0 1rem 0 0',
+  },
 };

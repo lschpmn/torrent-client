@@ -17,6 +17,7 @@ type Props = {
 const TorrentItem = ({ onPress, selected, style, torrent }: Props) => (
   <ListItem button style={styles.container} divider onMouseDown={onPress}>
     <Checkbox
+      size='small'
       checked={selected}
       style={styles.checkbox}
     />
@@ -32,6 +33,7 @@ export default TorrentItem;
 
 const styles = {
   checkbox: {
+    padding: 4,
     width: '2rem',
   },
   container: {
