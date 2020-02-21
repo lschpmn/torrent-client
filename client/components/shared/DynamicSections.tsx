@@ -98,7 +98,7 @@ const DynamicSections = ({ children, id, isVertical, listenOnly }: Props) => {
             }}
           />
         )}
-        {child}
+        <div style={{ overflow: 'auto' }}>{child}</div>
       </div>
     ))}
   </div>;
