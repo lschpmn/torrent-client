@@ -2,6 +2,7 @@ import { readAsync as read, writeAsync as write } from 'fs-jetpack';
 import * as getIncrementalPort from 'get-incremental-port';
 import { createServer } from 'http';
 import * as lowdb from 'lowdb';
+import { AdapterAsync } from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
 import { join } from 'path';
 import * as socketIO from 'socket.io';
@@ -13,7 +14,7 @@ import {
   SET_FILE_SELECTED,
   START_TORRENT,
 } from '../constants';
-import { Torrent } from '../types';
+import { DbSchema, Torrent } from '../types';
 import * as actions from './action-creators';
 import { setTorrent } from './action-creators';
 import TorrentEmitter from './TorrentEmitter';
@@ -41,7 +42,7 @@ async function startServer() {
   });
   server.listen(port, () => console.log(`server running on port ${port}`));
 
-  const adapter = new FileAsync(join(__dirname, '..', 'db.json'));
+  const adapter: AdapterAsync<DbSchema> = new FileAsync(join(__dirname, '..', 'db.json'));
   const db = await lowdb(adapter);
 
   await db.defaults({
@@ -51,6 +52,11 @@ async function startServer() {
   }).write();
 
   const torrentEmitter = new TorrentEmitter();
+  torrentEmitter.addListener(console.log);
+
+  const downloadDestination = db.get('downloadDestination').value();
+  const magnetLinks = db.get('torrents').map(torrent => torrent.magnetLink).value();
+  if (magnetLinks.length && downloadDestination) torrentEmitter.inflate(magnetLinks, downloadDestination);
 
   io.on('connection', socket => {
     const dispatch = action => socket.emit('dispatch', action);
@@ -67,7 +73,6 @@ async function startServer() {
         case SET_DIVIDER_POSITION_SERVER:
           await db
             .get('dividerPositions')
-            // @ts-ignore
             .assign(payload)
             .write();
           return;
@@ -75,12 +80,10 @@ async function startServer() {
         // torrents
         case ADD_TORRENT:
           const torrent = await torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
-          // @ts-ignore
           await db.get('torrents').unshift(torrent).write();
           dispatch(setTorrent(torrent));
           return;
         case DELETE_TORRENT:
-          // @ts-ignore
           await db.get('torrents').remove({ magnetLink: payload }).write();
           torrentEmitter.deleteTorrent(payload);
           dispatch(actions.setTorrents(db.get('torrents').value()));
@@ -88,7 +91,6 @@ async function startServer() {
         case SET_FILE_SELECTED:
           await db
             .get('torrents')
-            // @ts-ignore
             .find({ magnetLink: payload.magnetLink })
             .get('files')
             .find({ name: payload.fileName })
@@ -99,7 +101,6 @@ async function startServer() {
         case START_TORRENT:
           await db
             .get('torrents')
-            // @ts-ignore
             .find({ magnetLink: payload })
             .set('pending', false)
             .write();
@@ -119,6 +120,6 @@ async function writePortToIndex() {
   const index = await read(join(__dirname, '../client/index.html'));
   await write(
     join(__dirname, '../public/index.html'),
-    index.replace('PORT__ = 0', `PORT__ = ${port}`)
+    index.replace('PORT__ = 0', `PORT__ = ${port}`),
   );
 }

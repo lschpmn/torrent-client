@@ -4,6 +4,14 @@ export type Action = {
   type: string,
 };
 
+export type DbSchema = {
+  dividerPositions: {
+    [key: string]: number[],
+  },
+  downloadDestination: string,
+  torrents:  Torrent[],
+};
+
 export type File = {
   name: string,
   selected: boolean,
@@ -16,8 +24,8 @@ export type Torrent = {
   // timestamp
   added: number,
   files: File[],
-  name: string,
+  name?: string,
   magnetLink: string,
   pending: boolean,
-  size: number,
+  size?: number,
 };
