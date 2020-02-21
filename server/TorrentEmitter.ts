@@ -1,6 +1,6 @@
+import { cloneDeep, merge, set, unset } from 'lodash';
 import * as WebTorrent from 'webtorrent';
 import { Listener, Torrent } from '../types';
-import { clone, set, merge, unset } from 'lodash';
 
 export type TorrentEmitterState = {
   torrents: {
@@ -19,7 +19,7 @@ export default class TorrentEmitter {
   };
 
   get state(): TorrentEmitterState {
-    return clone(this._state);
+    return cloneDeep(this._state);
   }
 
   inflate(magnetLinks: string[], path: string) {

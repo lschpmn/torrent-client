@@ -1,6 +1,7 @@
 import { readAsync as read, writeAsync as write } from 'fs-jetpack';
 import * as getIncrementalPort from 'get-incremental-port';
 import { createServer } from 'http';
+import { keys, values } from 'lodash';
 import * as lowdb from 'lowdb';
 import { AdapterAsync } from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
@@ -17,7 +18,7 @@ import {
 import { DbSchema, Torrent } from '../types';
 import * as actions from './action-creators';
 import { setTorrent } from './action-creators';
-import TorrentEmitter from './TorrentEmitter';
+import TorrentEmitter, { TorrentEmitterState } from './TorrentEmitter';
 
 const START_PORT = 3000;
 let retries = 10;
@@ -52,17 +53,29 @@ async function startServer() {
   }).write();
 
   const torrentEmitter = new TorrentEmitter();
-  torrentEmitter.addListener(console.log);
-
-  const downloadDestination = db.get('downloadDestination').value();
-  const magnetLinks = db.get('torrents').map(torrent => torrent.magnetLink).value();
-  if (magnetLinks.length && downloadDestination) torrentEmitter.inflate(magnetLinks, downloadDestination);
 
   io.on('connection', socket => {
     const dispatch = action => socket.emit('dispatch', action);
-    torrentEmitter.setDispatch(dispatch);
 
+    const listener = (oldState: TorrentEmitterState) => {
+      if (keys(torrentEmitter.state.torrents).length > keys(oldState.torrents).length) {
+        console.log('torrent added');
+      }
+
+      values(torrentEmitter.state.torrents).forEach((torrent: Torrent) => {
+        if (!oldState.torrents[torrent.magnetLink]?.name && torrent.name) {
+          console.log(torrent.magnetLink);
+        }
+      });
+    };
+
+    torrentEmitter.setDispatch(dispatch);
+    torrentEmitter.addListener(listener);
     dispatch(actions.getState(db.value()));
+
+    const downloadDestination = db.get('downloadDestination').value();
+    const magnetLinks = db.get('torrents').map(torrent => torrent.magnetLink).value();
+    if (magnetLinks.length && downloadDestination) torrentEmitter.inflate(magnetLinks, downloadDestination);
 
     socket.on('dispatch', async ({ payload, type }) => {
       console.log(type);
