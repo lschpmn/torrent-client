@@ -26,6 +26,7 @@ const DeleteModal = ({ disabled, torrents }: Props) => {
 
   const onDelete = useCallback(() => {
     torrents.forEach(torrent => deleteTorrentAction(torrent.magnetLink));
+    setOpen(false);
   }, [torrents]);
 
   if (!torrents) return null;

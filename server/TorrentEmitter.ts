@@ -43,7 +43,7 @@ export default class TorrentEmitter {
         torrent.deselect(0, torrent.pieces.length - 1, 0);
 
         stateTorrent.files = torrent.files.map(file => ({
-          name: file.name,
+          name: file.path,
           selected: false,
           size: file.length,
         }));

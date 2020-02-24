@@ -37,22 +37,19 @@ async function startServer() {
   port = await getIncrementalPort(START_PORT);
   await writePortToIndex();
 
-  const server = createServer();
-  const io = socketIO(server, {
-    origins: '*:*',
-  });
-  server.listen(port, () => console.log(`server running on port ${port}`));
-
   const adapter: AdapterAsync<DbSchema> = new FileAsync(join(__dirname, '..', 'db.json'));
   const db = await lowdb(adapter);
+  const server = createServer();
+  const torrentEmitter = new TorrentEmitter();
+  const io = socketIO(server);
+
+  server.listen(port, () => console.log(`server running on port ${port}`));
 
   await db.defaults({
     dividerPositions: {},
     downloadDestination: '',
     torrents: [] as Torrent[],
   }).write();
-
-  const torrentEmitter = new TorrentEmitter();
 
   io.on('connection', socket => {
     const dispatch = action => socket.emit('dispatch', action);
