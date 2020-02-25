@@ -1,3 +1,4 @@
+import Checkbox from '@material-ui/core/Checkbox';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -28,10 +29,10 @@ const FilesTable = ({ files, magnetLink }: Props) => {
 
   const selectedFile = files.find(file => file.name === selectedFileName);
 
-  const flipFileSelected = useCallback(() => {
-    setFileSelectedAction(magnetLink, selectedFile?.name, !selectedFile?.selected);
+  const flipFileSelected = useCallback((filename: string, isSelected: boolean) => {
+    setFileSelectedAction(magnetLink, filename, isSelected);
     setMenuOpen(false);
-  }, [selectedFile]);
+  }, []);
 
   const mouseClick = useCallback((e, fileName: string) => {
     setMousePos({
@@ -65,11 +66,16 @@ const FilesTable = ({ files, magnetLink }: Props) => {
           button
           divider
           key={file.name}
-          onContextMenu={(e) => mouseClick(e, file.name)}
+          onContextMenu={e => mouseClick(e, file.name)}
         >
           <DynamicSections id="file-table-head" listenOnly>
             <T color="textPrimary" variant="body2" style={{  flex: 1 }}>
-              {String(file.selected)}
+              <Checkbox
+                checked={file.selected}
+                onChange={e => flipFileSelected(file.name, e.target.checked)}
+                size='small'
+                style={{ padding: 0 }}
+              />
             </T>
             <T color="textPrimary" variant="body2" style={{ flex: 8 }}>
               {file.name}
@@ -93,7 +99,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
       open={menuOpen}
     >
       <MenuItem>
-        <div onClick={flipFileSelected}>
+        <div onClick={() => flipFileSelected(selectedFileName, !selectedFile.selected)}>
           {selectedFile?.selected
             ? 'Don\'t Download'
             : 'Download'}

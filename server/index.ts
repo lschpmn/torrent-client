@@ -1,7 +1,6 @@
 import { readAsync as read, writeAsync as write } from 'fs-jetpack';
 import * as getIncrementalPort from 'get-incremental-port';
 import { createServer } from 'http';
-import { keys, values } from 'lodash';
 import * as lowdb from 'lowdb';
 import { AdapterAsync } from 'lowdb';
 import * as FileAsync from 'lowdb/adapters/FileAsync';
@@ -17,7 +16,6 @@ import {
 } from '../constants';
 import { DbSchema, Torrent } from '../types';
 import * as actions from './action-creators';
-import { setTorrent } from './action-creators';
 import TorrentEmitter, { TorrentEmitterState } from './TorrentEmitter';
 
 const START_PORT = 3000;
@@ -54,16 +52,10 @@ async function startServer() {
   io.on('connection', socket => {
     const dispatch = action => socket.emit('dispatch', action);
 
-    const listener = (oldState: TorrentEmitterState) => {
-      if (keys(torrentEmitter.state.torrents).length > keys(oldState.torrents).length) {
-        console.log('torrent added');
-      }
-
-      values(torrentEmitter.state.torrents).forEach((torrent: Torrent) => {
-        if (!oldState.torrents[torrent.magnetLink]?.name && torrent.name) {
-          console.log(torrent.magnetLink);
-        }
-      });
+    const listener = async (oldState: TorrentEmitterState) => {
+      const torrents = torrentEmitter.state.torrents;
+      dispatch(actions.setTorrents(Object.values(torrents)));
+      await db.set('torrents', Object.values(torrents)).write();
     };
 
     torrentEmitter.setDispatch(dispatch);
@@ -71,8 +63,8 @@ async function startServer() {
     dispatch(actions.getState(db.value()));
 
     const downloadDestination = db.get('downloadDestination').value();
-    const magnetLinks = db.get('torrents').map(torrent => torrent.magnetLink).value();
-    if (magnetLinks.length && downloadDestination) torrentEmitter.inflate(magnetLinks, downloadDestination);
+    const torrents = db.get('torrents').value();
+    if (torrents.length && downloadDestination) torrentEmitter.inflate(torrents, downloadDestination);
 
     socket.on('dispatch', async ({ payload, type }) => {
       console.log(type);
@@ -89,32 +81,16 @@ async function startServer() {
 
         // torrents
         case ADD_TORRENT:
-          const torrent = await torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
-          await db.get('torrents').unshift(torrent).write();
-          dispatch(setTorrent(torrent));
+          torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
           return;
         case DELETE_TORRENT:
-          await db.get('torrents').remove({ magnetLink: payload }).write();
           torrentEmitter.deleteTorrent(payload);
-          dispatch(actions.setTorrents(db.get('torrents').value()));
           return;
         case SET_FILE_SELECTED:
-          await db
-            .get('torrents')
-            .find({ magnetLink: payload.magnetLink })
-            .get('files')
-            .find({ name: payload.fileName })
-            .set('selected', payload.selected)
-            .write();
-          dispatch(actions.setTorrents(db.get('torrents').value()));
+          torrentEmitter.setFileSelected(payload.magnetLink, payload.fileName, payload.selected);
           return;
         case START_TORRENT:
-          await db
-            .get('torrents')
-            .find({ magnetLink: payload })
-            .set('pending', false)
-            .write();
-          dispatch(actions.setTorrents(db.get('torrents').value()));
+          torrentEmitter.startTorrent(payload);
           return;
 
         // settings

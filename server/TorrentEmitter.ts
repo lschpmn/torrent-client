@@ -1,4 +1,4 @@
-import { cloneDeep, merge, set, unset } from 'lodash';
+import { cloneDeep, merge, unset } from 'lodash';
 import * as WebTorrent from 'webtorrent';
 import { Listener, Torrent } from '../types';
 
@@ -18,15 +18,20 @@ export default class TorrentEmitter {
     torrents: {},
   };
 
+  setTorrent = (torrent: Torrent) =>
+    this._updateState({ torrents: { [torrent.magnetLink]: torrent } });
+
   get state(): TorrentEmitterState {
     return cloneDeep(this._state);
   }
 
-  inflate(magnetLinks: string[], path: string) {
-    // magnetLinks.forEach(magnetLink => this.addTorrent(magnetLink, path));
+  inflate(torrents: Torrent[], path: string) {
+    const torrentMap = torrents.reduce((tot, tor) => ({ ...tot, [tor.magnetLink]: tor }), {});
+
+    this._updateState({ torrents: torrentMap });
   }
 
-  addTorrent(magnetLink: string, path: string): Promise<Torrent> {
+  addTorrent(magnetLink: string, path: string) {
     if (this.client.get(magnetLink)) return;
 
     const stateTorrent: Torrent = {
@@ -35,33 +40,45 @@ export default class TorrentEmitter {
       magnetLink,
       pending: true,
     };
-    this._updateState(set(this.state, ['torrents', magnetLink], stateTorrent));
+    this.setTorrent(stateTorrent);
 
-    return new Promise((resolve => {
-      this.client.add(magnetLink, { path }, (torrent: WebTorrent.Torrent) => {
-        // bug workaround, https://github.com/webtorrent/webtorrent/issues/164#issuecomment-248395202
-        torrent.deselect(0, torrent.pieces.length - 1, 0);
+    this.client.add(magnetLink, { path }, (torrent: WebTorrent.Torrent) => {
+      // bug workaround, https://github.com/webtorrent/webtorrent/issues/164#issuecomment-248395202
+      torrent.deselect(0, torrent.pieces.length - 1, 0);
 
-        stateTorrent.files = torrent.files.map(file => ({
-          name: file.path,
-          selected: false,
-          size: file.length,
-        }));
-        stateTorrent.name = torrent.name;
-        stateTorrent.size = torrent.length;
-        this._updateState(set(this.state, ['torrents', magnetLink], stateTorrent));
-
-        resolve(stateTorrent);
-      });
-    }));
+      stateTorrent.files = torrent.files.map(file => ({
+        name: file.path,
+        selected: false,
+        size: file.length,
+      }));
+      stateTorrent.name = torrent.name;
+      stateTorrent.size = torrent.length;
+      this.setTorrent(stateTorrent);
+    });
   }
 
   deleteTorrent(magnetLink: string) {
-    if (!this.client.get(magnetLink)) return;
+    if (!this.state.torrents[magnetLink]) return;
     this.client.remove(magnetLink);
     const state = this.state;
     unset(state, ['torrents', magnetLink]);
     this._updateState(state);
+  }
+
+  setFileSelected(magnetLink: string, fileName: string, isSelected: boolean) {
+    const torrent = this.state.torrents[magnetLink];
+    if (!torrent) throw new Error('Torrent does not exist');
+
+    torrent.files.forEach(file => file.name === fileName ? file.selected = isSelected : null);
+    this.setTorrent(torrent);
+  }
+
+  startTorrent(magnetLink: string) {
+    const torrent = this.state.torrents[magnetLink];
+    if (!torrent) throw new Error('Torrent does not exist');
+
+    torrent.pending = false;
+    this.setTorrent(torrent);
   }
 
   setDispatch(dispatch: Listener) {
