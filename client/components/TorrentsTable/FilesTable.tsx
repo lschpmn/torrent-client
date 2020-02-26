@@ -6,6 +6,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import T from '@material-ui/core/Typography';
+import { dirname } from 'path';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { File } from '../../../types';
@@ -22,11 +23,9 @@ const FilesTable = ({ files, magnetLink }: Props) => {
   const setFileSelectedAction = useAction(setFileSelected);
   const [selectedFileName, setSelectedFileName] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [mousePos, setMousePos] = useState({
-    x: 0,
-    y: 0,
-  });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+  const base = dirname(files[0].name);
   const selectedFile = files.find(file => file.name === selectedFileName);
 
   const flipFileSelected = useCallback((filename: string, isSelected: boolean) => {
@@ -69,7 +68,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
           onContextMenu={e => mouseClick(e, file.name)}
         >
           <DynamicSections id="file-table-head" listenOnly>
-            <T color="textPrimary" variant="body2" style={{  flex: 1 }}>
+            <T color="textPrimary" variant="body2" style={{ flex: 1 }}>
               <Checkbox
                 checked={file.selected}
                 onChange={e => flipFileSelected(file.name, e.target.checked)}
@@ -78,7 +77,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
               />
             </T>
             <T color="textPrimary" variant="body2" style={{ flex: 8 }}>
-              {file.name}
+              {file.name.replace(base + '\\', '')}
             </T>
             <T color="textPrimary" variant="body2" style={{ flex: 8 }}>
               {getSizeStr(file.size)}
