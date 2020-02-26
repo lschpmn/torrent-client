@@ -84,7 +84,7 @@ async function startServer() {
           torrentEmitter.addTorrent(payload, db.get('downloadDestination').value());
           return;
         case DELETE_TORRENT:
-          torrentEmitter.deleteTorrent(payload);
+          await torrentEmitter.deleteTorrent(payload);
           return;
         case SET_FILE_SELECTED:
           torrentEmitter.setFileSelected(payload.magnetLink, payload.fileName, payload.selected);

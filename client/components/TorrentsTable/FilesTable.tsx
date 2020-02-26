@@ -25,7 +25,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  const base = dirname(files[0].name);
+  const base = dirname(files[0]?.name || '');
   const selectedFile = files.find(file => file.name === selectedFileName);
 
   const flipFileSelected = useCallback((filename: string, isSelected: boolean) => {
@@ -77,7 +77,7 @@ const FilesTable = ({ files, magnetLink }: Props) => {
               />
             </T>
             <T color="textPrimary" variant="body2" style={{ flex: 8 }}>
-              {file.name.replace(base + '\\', '')}
+              {file.name.replace( `${base}\\`, '')}
             </T>
             <T color="textPrimary" variant="body2" style={{ flex: 8 }}>
               {getSizeStr(file.size)}

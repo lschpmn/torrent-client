@@ -1,4 +1,6 @@
-import { cloneDeep, merge, unset } from 'lodash';
+import { removeAsync, writeAsync } from 'fs-jetpack';
+import { cloneDeep, set, unset } from 'lodash';
+import { join } from 'path';
 import * as WebTorrent from 'webtorrent';
 import { Listener, Torrent } from '../types';
 
@@ -18,17 +20,10 @@ export default class TorrentEmitter {
     torrents: {},
   };
 
-  setTorrent = (torrent: Torrent) =>
-    this._updateState({ torrents: { [torrent.magnetLink]: torrent } });
-
-  get state(): TorrentEmitterState {
-    return cloneDeep(this._state);
-  }
-
   inflate(torrents: Torrent[], path: string) {
     const torrentMap = torrents.reduce((tot, tor) => ({ ...tot, [tor.magnetLink]: tor }), {});
 
-    this._updateState({ torrents: torrentMap });
+    this.updateState({ torrents: torrentMap });
   }
 
   addTorrent(magnetLink: string, path: string) {
@@ -54,15 +49,32 @@ export default class TorrentEmitter {
       stateTorrent.name = torrent.name;
       stateTorrent.size = torrent.length;
       this.setTorrent(stateTorrent);
+      writeAsync(getTorrentFilePath(torrent.name), torrent.torrentFile)
+        .catch(e => {
+          console.log('failed to write torrent file');
+          console.log(e);
+        });
     });
   }
 
-  deleteTorrent(magnetLink: string) {
-    if (!this.state.torrents[magnetLink]) return;
-    this.client.remove(magnetLink);
-    const state = this.state;
-    unset(state, ['torrents', magnetLink]);
-    this._updateState(state);
+  async deleteTorrent(magnetLink: string) {
+    const torrent = this.state.torrents[magnetLink];
+    if (!torrent) return;
+
+    try {
+      this.client.remove(magnetLink);
+    } catch (e) {
+      console.log('error removing torrent from client');
+      console.log(e);
+    }
+    try {
+      await removeAsync(getTorrentFilePath(torrent.name));
+    } catch (e) {
+      console.log('delete file error');
+      console.log(e);
+    }
+
+    this.updateState(unsetBetter(this.state, ['torrents', magnetLink]));
   }
 
   setFileSelected(magnetLink: string, fileName: string, isSelected: boolean) {
@@ -81,6 +93,19 @@ export default class TorrentEmitter {
     this.setTorrent(torrent);
   }
 
+  get state(): TorrentEmitterState {
+    return cloneDeep(this._state);
+  }
+
+  private setTorrent = (torrent: Torrent) =>
+    this.updateState(set(this.state, ['torrents', torrent.magnetLink], torrent));
+
+  private updateState = (newState: TorrentEmitterState) => {
+    const oldState = this.state;
+    this._state = cloneDeep(newState);
+    this.listeners.forEach(listener => listener(oldState));
+  };
+
   setDispatch(dispatch: Listener) {
     this.dispatch = dispatch;
   }
@@ -92,10 +117,11 @@ export default class TorrentEmitter {
   removeListener(listener: TorrentEmitterListener) {
     this.listeners = this.listeners.filter(l => l !== listener);
   }
-
-  _updateState(newState: TorrentEmitterState) {
-    const oldState = this.state;
-    this._state = merge({}, oldState, newState);
-    this.listeners.forEach(listener => listener(oldState));
-  }
 }
+
+const getTorrentFilePath = (name: string) => join(__dirname, '..', 'public', 'torrents', `${name}.torrent`);
+
+const unsetBetter = (obj, path) => {
+  unset(obj, path);
+  return obj;
+};

@@ -8,6 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TC from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TR from '@material-ui/core/TableRow';
+import { dirname } from 'path';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { Torrent } from '../../../types';
@@ -24,6 +25,7 @@ const PendingTorrentModal = ({ torrent }: Props) => {
   const deleteTorrentAction = useAction(() => deleteTorrent(torrent.magnetLink), [torrent.magnetLink]);
   const startTorrentAction = useAction(() => startTorrent(torrent.magnetLink), [torrent.magnetLink]);
 
+  const base = dirname(torrent.files?.[0]?.name || '');
   const isAllFilesSelected = useMemo(() => torrent.files.every(file => file.selected), [torrent.files]);
   const flipAllFilesSelected = useCallback(() => {
     torrent
@@ -79,7 +81,7 @@ const PendingTorrentModal = ({ torrent }: Props) => {
                   />
                 </TC>
                 <TC>{getSizeStr(file.size)}</TC>
-                <TC>{file.name}</TC>
+                <TC>{file.name.replace(`${base}\\`, '')}</TC>
               </TR>
             )}
           </TableBody>
