@@ -82,7 +82,11 @@ export default class TorrentEmitter {
     if (!torrent) throw new Error('Torrent does not exist');
 
     torrent.files.forEach(file => file.name === fileName ? file.selected = isSelected : null);
-    this.setTorrent(torrent);
+    const clientTorrent = this.client.torrents.find(torrent => torrent.magnetURI === magnetLink);
+    if (clientTorrent) {
+      clientTorrent.files.find(file => file.path === fileName)?.select();
+      this.setTorrent(torrent);
+    }
   }
 
   startTorrent(magnetLink: string) {
