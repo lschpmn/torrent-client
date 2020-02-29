@@ -57,7 +57,7 @@ export default class TorrentEmitter {
     });
   }
 
-  async deleteTorrent(magnetLink: string) {
+  deleteTorrent(magnetLink: string) {
     const torrent = this.state.torrents[magnetLink];
     if (!torrent) return;
 
@@ -67,12 +67,12 @@ export default class TorrentEmitter {
       console.log('error removing torrent from client');
       console.log(e);
     }
-    try {
-      await removeAsync(getTorrentFilePath(torrent.name));
-    } catch (e) {
-      console.log('delete file error');
-      console.log(e);
-    }
+
+    removeAsync(getTorrentFilePath(torrent.name))
+      .catch(e => {
+        console.log(`error trying to delete ${torrent.name}.torrent`);
+        console.log(e);
+      });
 
     this.updateState(unsetBetter(this.state, ['torrents', magnetLink]));
   }
@@ -86,6 +86,8 @@ export default class TorrentEmitter {
     if (clientTorrent) {
       clientTorrent.files.find(file => file.path === fileName)?.select();
       this.setTorrent(torrent);
+    } else {
+      this.deleteTorrent(magnetLink);
     }
   }
 
