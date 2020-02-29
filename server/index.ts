@@ -38,7 +38,7 @@ async function startServer() {
   const adapter: AdapterAsync<DbSchema> = new FileAsync(join(__dirname, '..', 'db.json'));
   const db = await lowdb(adapter);
   const server = createServer();
-  const torrentEmitter = new TorrentEmitter();
+  const torrentEmitter = new TorrentEmitter(db.get('torrents').value(), db.get('downloadDestination').value());
   const io = socketIO(server);
 
   server.listen(port, () => console.log(`server running on port ${port}`));
@@ -61,10 +61,6 @@ async function startServer() {
     torrentEmitter.setDispatch(dispatch);
     torrentEmitter.addListener(listener);
     dispatch(actions.getState(db.value()));
-
-    const downloadDestination = db.get('downloadDestination').value();
-    const torrents = db.get('torrents').value();
-    if (torrents.length && downloadDestination) torrentEmitter.inflate(torrents, downloadDestination);
 
     socket.on('dispatch', async ({ payload, type }) => {
       console.log(type);

@@ -20,10 +20,22 @@ export default class TorrentEmitter {
     torrents: {},
   };
 
-  inflate(torrents: Torrent[], path: string) {
-    const torrentMap = torrents.reduce((tot, tor) => ({ ...tot, [tor.magnetLink]: tor }), {});
+  constructor(torrents?: Torrent[], path?: string) {
+    if (!torrents || !path) return;
 
+    const torrentMap = torrents.reduce((tot, tor) => ({ ...tot, [tor.magnetLink]: tor }), {});
     this.updateState({ torrents: torrentMap });
+
+    torrents.forEach(torrent => {
+      this.client.add(getTorrentFilePath(torrent.name), (webTorrent: WebTorrent.Torrent) => {
+        webTorrent.deselect(0, webTorrent.pieces.length - 1, 0);
+
+        torrent.files.forEach(file => file.selected &&
+          webTorrent.files
+            .find(webFile => webFile.path === file.name)
+            ?.select());
+      });
+    });
   }
 
   addTorrent(magnetLink: string, path: string) {
