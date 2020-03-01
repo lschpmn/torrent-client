@@ -58,7 +58,6 @@ async function startServer() {
       await db.set('torrents', Object.values(torrents)).write();
     };
 
-    torrentEmitter.setDispatch(dispatch);
     torrentEmitter.addListener(listener);
     dispatch(actions.getState(db.value()));
 

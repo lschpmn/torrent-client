@@ -1,8 +1,9 @@
 import { removeAsync, writeAsync } from 'fs-jetpack';
-import { cloneDeep, set, unset } from 'lodash';
+import { set, unset } from 'lodash';
 import { join } from 'path';
 import * as WebTorrent from 'webtorrent';
-import { Listener, Torrent } from '../types';
+import { Torrent } from '../types';
+import StateMachine from './StateMachine';
 
 export type TorrentEmitterState = {
   torrents: {
@@ -10,17 +11,11 @@ export type TorrentEmitterState = {
   },
 };
 
-export type TorrentEmitterListener = (oldState: TorrentEmitterState) => void;
-
-export default class TorrentEmitter {
+export default class TorrentEmitter extends StateMachine<TorrentEmitterState> {
   client = new WebTorrent();
-  dispatch: Listener;
-  private listeners: TorrentEmitterListener[] = [];
-  private _state: TorrentEmitterState = {
-    torrents: {},
-  };
 
   constructor(torrents?: Torrent[], path?: string) {
+    super();
     if (!torrents || !path) return;
 
     const torrentMap = torrents.reduce((tot, tor) => ({ ...tot, [tor.magnetLink]: tor }), {});
@@ -111,30 +106,9 @@ export default class TorrentEmitter {
     this.setTorrent(torrent);
   }
 
-  get state(): TorrentEmitterState {
-    return cloneDeep(this._state);
-  }
-
   private setTorrent = (torrent: Torrent) =>
     this.updateState(set(this.state, ['torrents', torrent.magnetLink], torrent));
 
-  private updateState = (newState: TorrentEmitterState) => {
-    const oldState = this.state;
-    this._state = cloneDeep(newState);
-    this.listeners.forEach(listener => listener(oldState));
-  };
-
-  setDispatch(dispatch: Listener) {
-    this.dispatch = dispatch;
-  }
-
-  addListener(listener: TorrentEmitterListener) {
-    this.listeners.push(listener);
-  }
-
-  removeListener(listener: TorrentEmitterListener) {
-    this.listeners = this.listeners.filter(l => l !== listener);
-  }
 }
 
 const getTorrentFilePath = (name: string) => join(__dirname, '..', 'public', 'torrents', `${name}.torrent`);
