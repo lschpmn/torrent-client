@@ -23,9 +23,13 @@ export type Listener = (action: Action) => void;
 export type Torrent = {
   // timestamp
   added: number,
+  downloaded?: number,
+  downloadSpeed?: number,
   files: File[],
   name?: string,
   magnetLink: string,
   pending: boolean,
   size?: number,
+  uploaded?: number,
+  uploadSpeed?: number,
 };

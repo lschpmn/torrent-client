@@ -106,6 +106,20 @@ export default class TorrentEmitter extends StateMachine<TorrentEmitterState> {
     this.setTorrent(torrent);
   }
 
+  updateStats() {
+    const state = this.state;
+    this.client.torrents.forEach(webTorrent => {
+      const torrent = state.torrents[webTorrent.magnetURI];
+      torrent.downloaded = webTorrent.downloaded;
+      torrent.downloadSpeed = webTorrent.downloadSpeed;
+
+      torrent.uploaded = webTorrent.uploaded;
+      torrent.uploadSpeed = webTorrent.uploadSpeed;
+    });
+
+    this.updateState(state);
+  }
+
   private setTorrent = (torrent: Torrent) =>
     this.updateState(set(this.state, ['torrents', torrent.magnetLink], torrent));
 
