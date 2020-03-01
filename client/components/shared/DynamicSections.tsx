@@ -93,6 +93,8 @@ const DynamicSections = ({ children, id, isVertical, listenOnly }: Props) => {
             orientation={isVertical ? 'horizontal' : 'vertical'}
             style={{
               cursor: `${isVertical ? 'ns' : 'ew'}-resize`,
+              borderBottom: isVertical ? 'rgba(0,0,0,0) 0.5rem solid' : '',
+              borderRight: isVertical ? '' : 'rgba(0,0,0,0) 0.5rem solid',
               height: isVertical ? 1 : 'inherit',
               width: isVertical ? 'inherit' : 1,
             }}
@@ -111,7 +113,6 @@ const useStyles = makeStyles({
     width: '100%',
   },
   divider: {
-    borderRight: 'rgba(0,0,0,0) 0.5rem solid',
     backgroundClip: 'content-box',
     marginRight: '0.25rem',
   } as React.CSSProperties,
