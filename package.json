@@ -14,7 +14,7 @@
   "dependencies": {
     "@material-ui/core": "4.9.0",
     "@material-ui/icons": "4.5.1",
-    "electron": "7.1.11",
+    "electron": "9.1.0",
     "fs-jetpack": "^2.2.3",
     "get-incremental-port": "gist:5566749d5222db411f51c4414171b17d",
     "lowdb": "1.0.0",
